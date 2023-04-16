@@ -39,7 +39,22 @@ app.post('/api/sign-up', async (req, res) => {
     });
     res.status(201).json({ requestStatus: 'user created successfully', user });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ errorMessage: error });
+    console.log(error);
+  }
+});
+
+// get all users
+app.get('/api/get-all-users', async (req, res) => {
+  try {
+    const allUsers = await userModel.find({});
+    res.status(200).json({
+      requestStatus: 'users fetched successfully',
+      count: allUsers.length,
+      users: allUsers,
+    });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error });
     console.log(error);
   }
 });
@@ -58,27 +73,28 @@ app.post('/api/create-entry', async (req, res) => {
       .status(201)
       .json({ requestStatus: 'entry created successfully', entry });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ errorMessage: error });
     console.log(error);
   }
 });
 
-// get all users
-app.get('/api/get-all-users', async (req, res) => {
+//get single entry
+
+app.get('/api/get-entry/:id', async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const allUsers = await userModel.find({});
-    res.status(200).json({
-      requestStatus: 'users fetched successfully',
-      count: allUsers.length,
-      users: allUsers,
-    });
+    const entry = await entryModel.findOne({ _id: id });
+    res
+      .status(200)
+      .json({ requestStatus: 'entry fetched successfully', entry: entry });
   } catch (error) {
-    res.status(500).json({ error });
-    console.log(error);
+    res.status(500).json({ errorMessage: error });
   }
 });
 
 // get all entries
+
 app.get('/api/get-all-entries', async (req, res) => {
   try {
     const allEntries = await entryModel.find({});
@@ -88,7 +104,7 @@ app.get('/api/get-all-entries', async (req, res) => {
       entries: allEntries,
     });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ errorMessage: error });
     console.log(error);
   }
 });
@@ -109,7 +125,7 @@ app.delete('/api/delete-entry/:id', async (req, res) => {
       .status(200)
       .json({ requestStatus: 'entry deleted successfully', entry });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ errorMessage: error });
     console.log(error);
   }
 });
@@ -142,7 +158,7 @@ app.patch('/api/edit-entry/:id', async (req, res) => {
       .status(200)
       .json({ requestStatus: 'entry updated successfully', entry });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ errorMessage: error });
     console.log(error);
   }
 });
