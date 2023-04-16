@@ -4,11 +4,11 @@ const entrySchema = new mongoose.Schema(
   {
     entryTitle: {
       type: String,
-      required: [true, 'please provide entry title'],
+      require: [true, 'please provide an entry title'],
     },
     entryLocation: {
       type: String,
-      require: [true, 'Please provide entry location'],
+      require: [true, 'Please provide an entry location'],
       //   minLength: 38,
       // maxLength: 12,
     },
@@ -17,6 +17,13 @@ const entrySchema = new mongoose.Schema(
       require: [true, 'Please provide the entry body'],
       //   minLength: 38,
       // maxLength: 12,
+    },
+    entryIndex: {
+      type: Number,
+      require: [
+        true,
+        'correct entry index is absent - there seem to be a client-side programming error',
+      ],
     },
   },
   { timestamps: true }

@@ -29,17 +29,40 @@ app.get('/api', (req, res) => {
 
 // create user
 app.post('/api/sign-up', async (req, res) => {
-  const { username, password, confirmPassword } = req.body;
+  const { fullName, email, password, confirmPassword } = req.body;
 
   try {
     const user = await userModel.create({
-      username,
+      fullName,
+      email,
       password,
       confirmPassword,
     });
-    res.status(201).json({ requestStatus: 'user created successfully', user });
+    res
+      .status(201)
+      .json({ requestStatus: 'account created successfully', user: user });
   } catch (error) {
-    res.status(500).json({ errorMessage: error });
+    res
+      .status(500)
+      .json({ requestStatus: 'account creation failed', errorMessage: error });
+    // console.log(error);
+  }
+});
+
+//get single user
+
+app.get('/api/get-user/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await userModel.findOne({ _id: id });
+    res
+      .status(200)
+      .json({ requestStatus: 'user fetched successfully', user: user });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ requestStatus: 'request unsuccessful', errorMessage: error });
     console.log(error);
   }
 });
@@ -54,20 +77,23 @@ app.get('/api/get-all-users', async (req, res) => {
       users: allUsers,
     });
   } catch (error) {
-    res.status(500).json({ errorMessage: error });
+    res
+      .status(500)
+      .json({ requestStatus: 'request unsuccessful', errorMessage: error });
     console.log(error);
   }
 });
 
 // create entry;
 app.post('/api/create-entry', async (req, res) => {
-  const { entryTitle, entryLocation, entryBody } = req.body;
+  const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
 
   try {
     const entry = await entryModel.create({
       entryTitle,
       entryLocation,
       entryBody,
+      entryIndex,
     });
     res
       .status(201)
@@ -138,7 +164,7 @@ app.patch('/api/edit-entry/:id', async (req, res) => {
 
   console.log(req.body);
 
-  const { entryTitle, entryLocation, entryBody } = req.body;
+  const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
 
   try {
     const entry = await entryModel.findByIdAndUpdate({ _id: id }, req.body, {
@@ -146,7 +172,10 @@ app.patch('/api/edit-entry/:id', async (req, res) => {
       runValidators: true,
     });
 
-    if (entryTitle === '' || entryLocation === '' || entryBody === '') {
+    if (
+      (entryTitle === '' || entryLocation === '' || entryBody === '',
+      entryIndex === '')
+    ) {
       return res.status(400).json({ error: `please fill all fields` });
     }
 
@@ -156,7 +185,7 @@ app.patch('/api/edit-entry/:id', async (req, res) => {
 
     res
       .status(200)
-      .json({ requestStatus: 'entry updated successfully', entry });
+      .json({ requestStatus: 'entry updated successfully', entry: entry });
   } catch (error) {
     res.status(500).json({ errorMessage: error });
     console.log(error);

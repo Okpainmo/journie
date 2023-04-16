@@ -2,9 +2,19 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
   {
-    username: {
+    fullName: {
       type: String,
-      required: [true, 'please provide your username'],
+      require: [true, 'please provide your full name'],
+    },
+    email: {
+      type: String,
+      require: [true, 'please provide your email address'],
+      match: [
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        ,
+        'Please provide a valid email address',
+      ],
+      unique: true,
     },
     password: {
       type: String,
@@ -14,7 +24,7 @@ const userSchema = new mongoose.Schema(
     },
     confirmPassword: {
       type: String,
-      //   require: [true, 'Please provide your password'],
+      require: [true, 'Please provide your password'],
       //   minLength: 38,
       // maxLength: 12,
     },
