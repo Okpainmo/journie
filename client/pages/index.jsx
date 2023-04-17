@@ -85,8 +85,8 @@ function Home() {
     );
   }
 
-  const loggedInUser = localStorage.getItem('journieUser');
-  console.log(loggedInUser.slice(1, loggedInUser.length - 1));
+  // const loggedInUser = localStorage.getItem('journieUser');
+  // console.log(loggedInUser.slice(1, loggedInUser.length - 1));
 
   // if (local)
   return (
