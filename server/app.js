@@ -49,6 +49,41 @@ app.post('/api/sign-up', async (req, res) => {
   }
 });
 
+// log in user
+
+app.post('/api/log-in', async (req, res) => {
+  console.log(req.body);
+  const { email, password } = req.body;
+
+  try {
+    // find user by email and password
+
+    if (!email || !password) {
+      res.status(500).json({
+        requestStatus: 'login unsuccessful: email or password not provided',
+        errorMessage: error,
+      });
+    }
+
+    const user = await userModel.findOne({ email: email, password: password });
+
+    if (!user) {
+      res.status(404).json({
+        requestStatus: 'login unsuccessful: user not found',
+        errorMessage: error,
+      });
+    }
+
+    res.status(200).json({ requestStatus: 'login successful', user: user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      requestStatus: 'login unsuccessful: user not returned',
+      errorMessage: error,
+    });
+  }
+});
+
 //get single user
 
 app.get('/api/get-user/:id', async (req, res) => {
