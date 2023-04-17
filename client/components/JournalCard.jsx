@@ -1,22 +1,25 @@
 import React from 'react';
 import Link from 'next/link';
+
 // import Image from 'next/image';
 // import sampleImage from '@/assets/images/sample.jpg';
 
-function AdminJournalCard({ entry }) {
-  const postSlug = `${entry._id}`;
-  console.log(postSlug);
+function JournalCard({ entry, openModal, updateEntryId }) {
+  // console.log(entry._id);
+  const postId = entry._id;
+
+  const postSlug = `${postId}`;
 
   return (
-    <Link
-      href={`/${postSlug}`}
-      className='w-[100%] journal-card rounded shadow my-4 sm:my-6 md:w-[48%] xl:w-[30%]'
+    <main
+      className='w-[100%] journal-card rounded shadow my-4 sm:my-6 md:w-[48%] xl:w-[30%] opacity-0'
+      style={{ transition: 'opacity .75s ease-in', opacity: '1' }}
     >
       <section
-        className='flex gap-8 sm:gap-16 md:gap-8 items-center px-3 py-2'
+        className='flex gap-8 sm:gap-16 md:gap-8 items-center px-4 py-2 min-h-[100px] justify-between'
         // style={{ alignSelf: 'flex-start' }}
       >
-        <div className='icon'>
+        <div className='icon  w-[12%]'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
@@ -32,17 +35,43 @@ function AdminJournalCard({ entry }) {
             />
           </svg>
         </div>
-        <div className='entry-details'>
-          <div className='role font-bold poppins'>{entry.entryTitle}</div>
-          <div className='text-gray-400 flex flex-row mt-2'>
-            <span className='company-details text-[12px]'>
-              {entry.updatedAt.slice(0, 10)} | {entry.entryLocation}
-            </span>
+        <Link className='entry-details w-[72%]' href={`/entry/${postSlug}`}>
+          <div>
+            <div className='role font-bold poppins capitalize'>
+              {entry.entryTitle}
+            </div>
+            <div className='text-gray-400 flex flex-row mt-2'>
+              <span className='company-details text-[12px]'>
+                {entry.updatedAt.slice(0, 10)} | {entry.entryLocation}
+              </span>
+            </div>
           </div>
-        </div>
+        </Link>
+        <button
+          className='delete w-[12%]'
+          onClick={() => {
+            openModal();
+            updateEntryId(postId);
+          }}
+        >
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='w-6 h-6 text-gray-600'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0'
+            />
+          </svg>
+        </button>
       </section>
-    </Link>
+    </main>
   );
 }
 
-export default AdminJournalCard;
+export default JournalCard;

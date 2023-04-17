@@ -4,7 +4,7 @@ import Link from 'next/link';
 function FloatingButton() {
   return (
     <Link href='create-entry'>
-      <button className='fixed bottom-[30px] lg:bottom-20 right-[30px] lg:right-20 rounded-[100%] bg-purple-800 text-white p-4'>
+      <button className='fixed shadow-lg bottom-[30px] lg:bottom-16 right-[30px] lg:right-16 rounded-[100%] bg-purple-800 text-white p-4'>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'

@@ -1,48 +1,57 @@
 import React, { useState } from 'react';
-// import Link from 'next/link';
-import AppWrapper from '../components/layout/AppWrapper';
+import AppWrapper from '../../components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import FloatingButton from '@/components/FloatingButton';
+// import Link from 'next/link';
+// import AppWrapper from '../components/layout/AppWrapper';
+// import AppBody from '@/components/layout/AppBody';
 
-function CreateEntryPage() {
-  const [createEntryForm, setCreateEntryForm] = useState({
-    entryTitle: '',
-    entryLocation: '',
-    entryBody: '',
+function EditEntryPage({ entryData }) {
+  const {
+    entryTitle: title,
+    entryLocation: location,
+    entryBody: body,
+  } = entryData.entry;
+
+  const [editEntryForm, setEditEntryForm] = useState({
+    entryTitle: title,
+    entryLocation: location,
+    entryBody: body,
   });
 
-  async function createEntry(e) {
+  console.log(title);
+
+  async function editEntry(e) {
+    console.log(entryData);
     e.preventDefault();
 
     if (
-      createEntryForm.entryTitle === '' ||
-      createEntryForm.entryLocation === '' ||
-      createEntryForm.entryBody === ''
+      editEntryForm.entryTitle === '' ||
+      editEntryForm.entryLocation === '' ||
+      editEntryForm.entryBody === ''
     ) {
       toast.error('please fill in all fields', { duration: 3000 });
       return;
     }
 
-    const toastId = toast.loading('creating entry...');
-    // console.log(createEntryForm);
+    const toastId = toast.loading('submitting edit...');
 
-    const entry = await axios.post(
-      'https://journie-journalling-note-taking-app.onrender.com/api/create-entry',
-      createEntryForm
+    const editedEntry = await axios.patch(
+      `https://journie-journalling-note-taking-app.onrender.com/api/edit-entry/${entryData.entry._id}`,
+      editEntryForm
     );
 
-    console.log(entry);
+    console.log(editedEntry);
 
-    if (entry && entry.data.requestStatus === 'entry created successfully') {
-      toast.success('entry created successfully', {
+    if (
+      editedEntry &&
+      editedEntry.data.requestStatus === 'entry updated successfully'
+    ) {
+      toast.success('entry updated successfully', {
         id: toastId,
         duration: 4000,
-      });
-      setCreateEntryForm({
-        entryTitle: '',
-        entryLocation: '',
-        entryBody: '',
       });
     }
   }
@@ -50,17 +59,18 @@ function CreateEntryPage() {
   return (
     <AppWrapper>
       <AppBody>
-        <main className='create-entry-page px-3 pt-10 pb-20 rounded border mt-20 sm:mt-40 sm:w-[600px] sm:mx-auto'>
-          <div className='flex flex-col sm:px-3 gap-10'>
+        <main className='bg-white login-page px-3 pt-10 pb-20 rounded border mt-20 sm:mt-40 sm:w-[600px] sm:mx-auto'>
+          <div className='flex flex-col sm:px-3 gap-8'>
             {/* <Link href='/'> */}
             <div className='logo-wrapper text-center'>
               <span className='poppins font-bold text-purple-800 text-xl sm:text-3xl'>
-                Create an entry
+                Edit an entry
               </span>
               <p className='mt-2 text-[14px] w-[80%] mx-auto leading-7'>
-                “Memories are the key not to the past, but to the future.”
+                “Memory is the treasure house of the mind wherein the monuments
+                thereof are kept and preserved.”
                 <br />
-                <span className='font-bold'>~ Corrie ten Boom</span>
+                <span className='font-bold'>~ Thomas Fuller</span>
               </p>
             </div>
             {/* </Link> */}
@@ -72,10 +82,10 @@ function CreateEntryPage() {
                   type='text'
                   required
                   placeholder='entry title'
-                  value={createEntryForm.entryTitle}
+                  value={editEntryForm.entryTitle}
                   onChange={(e) => {
-                    setCreateEntryForm({
-                      ...createEntryForm,
+                    setEditEntryForm({
+                      ...editEntryForm,
                       entryTitle: e.target.value,
                     });
                   }}
@@ -89,10 +99,10 @@ function CreateEntryPage() {
                   type='text'
                   required
                   placeholder='entry location'
-                  value={createEntryForm.entryLocation}
+                  value={editEntryForm.entryLocation}
                   onChange={(e) => {
-                    setCreateEntryForm({
-                      ...createEntryForm,
+                    setEditEntryForm({
+                      ...editEntryForm,
                       entryLocation: e.target.value,
                     });
                   }}
@@ -105,13 +115,13 @@ function CreateEntryPage() {
                   className='mt-2 px-3 py-2 border outline-none rounded'
                   type='text'
                   cols={20}
-                  rows={10}
+                  rows={5}
                   required
                   placeholder='enter your thought here'
-                  value={createEntryForm.entryBody}
+                  value={editEntryForm.entryBody}
                   onChange={(e) => {
-                    setCreateEntryForm({
-                      ...createEntryForm,
+                    setEditEntryForm({
+                      ...editEntryForm,
                       entryBody: e.target.value,
                     });
                   }}
@@ -120,17 +130,34 @@ function CreateEntryPage() {
               </div>
               <button
                 type='button'
-                onClick={createEntry}
+                onClick={editEntry}
                 className='submit text-center bg-green-500 py-3 text-[12px] sm:text-[14px] text-white rounded w-full'
               >
-                Create Entry
+                Edit Entry
               </button>
             </form>
           </div>
         </main>
+        <FloatingButton />
       </AppBody>
     </AppWrapper>
   );
 }
 
-export default CreateEntryPage;
+export default EditEntryPage;
+
+export async function getServerSideProps(context) {
+  // fetch single entry
+
+  const { params } = context;
+  const eDResponse = await fetch(
+    `https://journie-journalling-note-taking-app.onrender.com/api/get-entry/${params.editEntryPageId}`
+  );
+  const entryData = await eDResponse.json();
+
+  return {
+    props: {
+      entryData,
+    },
+  };
+}

@@ -12,7 +12,7 @@ function EntryPage({ entriesData, params }) {
     return entry._id === params.entryPageId;
   });
 
-  // console.log(currentEntry);
+  console.log(currentEntry.entryTitle);
 
   // console.log(entriesData);
 
@@ -48,16 +48,16 @@ function EntryPage({ entriesData, params }) {
               </div>
             </div>
           </section>
-          <section className='entry-body flex flex-col gap-y-6 md:gap-y-10 py-8'>
+          <section className='entry-body flex flex-col gap-y-6 md:gap-y-10 py-8 text-[14px] leading-6'>
             {currentEntry.entryBody}
           </section>
           <section className='p-3 mt-3'>
             <div className='flex flex-row-reverse gap-4'>
-              <button className='bg-green-500 rounded text-white px-3 py-2 text-[12px]'>
+              <button className='bg-green-500 rounded text-white px-3 py-2 text-[12px] hidden'>
                 delete entry
               </button>
               <Link
-                href='edit-entry'
+                href={`/edit-entry/${currentEntry._id}`}
                 className='bg-green-500 rounded text-white px-3 py-2 text-[12px]'
               >
                 edit entry
