@@ -17,12 +17,6 @@ const app = express();
 // connect DB
 const dbConnector = require('./db/connect-db');
 
-// express middleware for handling json data in post-requests
-app.use(express.json());
-
-// use cors
-app.use(cors());
-
 // models
 
 const userModel = require('./models/user');
@@ -31,6 +25,12 @@ const entryModel = require('./models/entry');
 // middlewares
 
 const authMiddleware = require('./middlewares/auth');
+
+// express middleware for handling json data in post-requests
+app.use(express.json());
+
+// use cors
+app.use(cors());
 
 // home/test route
 app.get('/api', (req, res) => {
@@ -54,21 +54,21 @@ app.post('/api/sign-up', async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log(hashedPassword);
+    // console.log(hashedPassword);
 
     const hashedConfirmPassword = await bcrypt.hash(confirmPassword, salt);
-    console.log(hashedConfirmPassword);
+    // console.log(hashedConfirmPassword);
 
     // create user with hashed password
 
     const user = await userModel.create({
-      fullName,
-      email,
+      fullName: fullName,
+      email: email,
       password: hashedPassword,
       confirmPassword: hashedConfirmPassword,
     });
 
-    // console.log(user);
+    console.log(user);
 
     // create token
 
