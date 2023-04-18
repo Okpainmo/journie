@@ -28,7 +28,11 @@ app.use(cors());
 const userModel = require('./models/user');
 const entryModel = require('./models/entry');
 
-// home-route
+// middlewares
+
+const authMiddleware = require('./middlewares/auth');
+
+// home/test route
 app.get('/api', (req, res) => {
   res.status(200).send('app is live - welcome to journie');
 });
@@ -41,7 +45,7 @@ app.post('/api/sign-up', async (req, res) => {
     // check if all fields are filled
 
     if (!fullName || !email || !password || !confirmPassword) {
-      res.status(401).json({
+      res.status(400).json({
         requestStatus: 'account creation failed: please fill in all fields',
       });
     }
@@ -98,7 +102,7 @@ app.post('/api/log-in', async (req, res) => {
     // check if email and password are provided
 
     if (!email || !password) {
-      res.status(401).json({
+      res.status(400).json({
         requestStatus: 'login unsuccessful: email or password not provided',
         errorMessage: error,
       });
@@ -136,35 +140,6 @@ app.post('/api/log-in', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_LIFETIME }
     );
-    // console.log(token);
-
-    // authorize user
-
-    const authHeader = req.headers.authorization;
-    // console.log(authHeader);
-
-    const returnedToken = authHeader.split(' ')[1];
-    // console.log(returnedToken);
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(401).json({
-        requestStatus: 'login unsuccessful: authentication rejected',
-        errorMessage: error,
-      });
-    }
-
-    const isAuthorized = jwt.verify(returnedToken, process.env.JWT_SECRET);
-
-    if (
-      !isAuthorized ||
-      isAuthorized.userId !== user._id ||
-      isAuthorized.email !== user.email
-    ) {
-      res.status(401).json({
-        requestStatus: 'login unsuccessful: authentication rejected',
-        errorMessage: error,
-      });
-    }
 
     res
       .status(200)
@@ -180,11 +155,19 @@ app.post('/api/log-in', async (req, res) => {
 
 //get single user
 
-app.get('/api/get-user/:id', async (req, res) => {
+app.get('/api/get-user/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 
   try {
     const user = await userModel.findOne({ _id: id });
+
+    if (!user) {
+      res.status(404).json({
+        requestStatus: 'request unseccessful',
+        errorMessage: 'user not found',
+      });
+    }
+
     res
       .status(200)
       .json({ requestStatus: 'user fetched successfully', user: user });
@@ -196,7 +179,7 @@ app.get('/api/get-user/:id', async (req, res) => {
   }
 });
 
-// get all users
+// get all users - pending delete
 app.get('/api/get-all-users', async (req, res) => {
   try {
     const allUsers = await userModel.find({});
@@ -214,16 +197,13 @@ app.get('/api/get-all-users', async (req, res) => {
 });
 
 // create entry;
-app.post('/api/create-entry', async (req, res) => {
-  const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
+app.post('/api/create-entry', authMiddleware, async (req, res) => {
+  // const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
+  req.body.createdBy = req.user.userId;
+  // console.log(req.body);
 
   try {
-    const entry = await entryModel.create({
-      entryTitle,
-      entryLocation,
-      entryBody,
-      entryIndex,
-    });
+    const entry = await entryModel.create(req.body);
     res
       .status(201)
       .json({ requestStatus: 'entry created successfully', entry });
@@ -235,11 +215,19 @@ app.post('/api/create-entry', async (req, res) => {
 
 //get single entry
 
-app.get('/api/get-entry/:id', async (req, res) => {
+app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 
   try {
     const entry = await entryModel.findOne({ _id: id });
+
+    if (!entry) {
+      res.status(404).json({
+        requestStatus: 'erequest unseccessful',
+        errorMessage: 'entry not found',
+      });
+    }
+
     res
       .status(200)
       .json({ requestStatus: 'entry fetched successfully', entry: entry });
@@ -250,11 +238,17 @@ app.get('/api/get-entry/:id', async (req, res) => {
 
 // get all entries
 
-app.get('/api/get-all-entries', async (req, res) => {
+app.get('/api/get-all-entries', authMiddleware, async (req, res) => {
+  // console.log(req.user);
+
   try {
-    const allEntries = await entryModel.find({});
+    // const user = await userModel.findOne({ _id: req.user.userId });
+
+    const allEntries = await entryModel.find({ createdBy: req.user.userId });
+
     res.status(200).json({
       requestStatus: 'entries fetched successfully',
+      // user: user,
       count: allEntries.length,
       entries: allEntries,
     });
@@ -266,7 +260,7 @@ app.get('/api/get-all-entries', async (req, res) => {
 
 // delete entry
 
-app.delete('/api/delete-entry/:id', async (req, res) => {
+app.delete('/api/delete-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   console.log(id);
   try {
@@ -287,11 +281,8 @@ app.delete('/api/delete-entry/:id', async (req, res) => {
 
 // edit entry
 
-app.patch('/api/edit-entry/:id', async (req, res) => {
+app.patch('/api/edit-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
-  console.log(id);
-
-  console.log(req.body);
 
   const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
 
