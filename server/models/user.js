@@ -4,11 +4,11 @@ const userSchema = new mongoose.Schema(
   {
     fullName: {
       type: String,
-      require: [true, 'please provide your full name'],
+      required: [true, 'please provide your full name'],
     },
     email: {
       type: String,
-      require: [true, 'please provide your email address'],
+      required: [true, 'please provide your email address'],
       match: [
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
         ,
@@ -18,14 +18,14 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      require: [true, 'Please provide your password'],
-      //   minLength: 38,
+      required: [true, 'Please provide your password'],
+      minLength: 6,
       // maxLength: 12,
     },
     confirmPassword: {
       type: String,
-      require: [true, 'Please provide your password'],
-      //   minLength: 38,
+      required: [true, 'Please provide your password'],
+      minLength: 6,
       // maxLength: 12,
     },
   },

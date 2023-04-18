@@ -1,6 +1,12 @@
 // dotenv import
 require('dotenv').config();
 
+// jwt import
+const jwt = require('jsonwebtoken');
+
+//bcryptjs import
+const bcrypt = require('bcryptjs');
+
 // cors(cross origin resource sharing)
 const cors = require('cors');
 
@@ -32,15 +38,49 @@ app.post('/api/sign-up', async (req, res) => {
   const { fullName, email, password, confirmPassword } = req.body;
 
   try {
+    // check if all fields are filled
+
+    if (!fullName || !email || !password || !confirmPassword) {
+      res.status(401).json({
+        requestStatus: 'account creation failed: please fill in all fields',
+      });
+    }
+
+    // hashing passwors for security
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    console.log(hashedPassword);
+
+    const hashedConfirmPassword = await bcrypt.hash(confirmPassword, salt);
+    console.log(hashedConfirmPassword);
+
+    // create user with hashed password
+
     const user = await userModel.create({
       fullName,
       email,
-      password,
-      confirmPassword,
+      password: hashedPassword,
+      confirmPassword: hashedConfirmPassword,
     });
-    res
-      .status(201)
-      .json({ requestStatus: 'account created successfully', user: user });
+
+    // console.log(user);
+
+    // create token
+
+    const token = jwt.sign(
+      { userId: user._id, userEmail: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_LIFETIME }
+    );
+
+    // return response
+
+    res.status(201).json({
+      requestStatus: 'account created successfully',
+      user: user,
+      token: token,
+    });
   } catch (error) {
     res
       .status(500)
@@ -49,23 +89,26 @@ app.post('/api/sign-up', async (req, res) => {
   }
 });
 
-// log in user
+// log-in user
 
 app.post('/api/log-in', async (req, res) => {
-  console.log(req.body);
   const { email, password } = req.body;
 
   try {
-    // find user by email and password
+    // check if email and password are provided
 
     if (!email || !password) {
-      res.status(500).json({
+      res.status(401).json({
         requestStatus: 'login unsuccessful: email or password not provided',
         errorMessage: error,
       });
     }
 
-    const user = await userModel.findOne({ email: email, password: password });
+    // find user by email and password
+
+    const user = await userModel.findOne({ email: email });
+
+    // return error if user is not valid
 
     if (!user) {
       res.status(404).json({
@@ -74,7 +117,58 @@ app.post('/api/log-in', async (req, res) => {
       });
     }
 
-    res.status(200).json({ requestStatus: 'login successful', user: user });
+    // compare hashed password with password in db
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    // console.log(isMatch);
+
+    if (!isMatch) {
+      res.status(401).json({
+        requestStatus: 'login unsuccessful: password does not match',
+        errorMessage: error,
+      });
+    }
+
+    // create token
+
+    const token = jwt.sign(
+      { userId: user._id, userEmail: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_LIFETIME }
+    );
+    // console.log(token);
+
+    // authorize user
+
+    const authHeader = req.headers.authorization;
+    // console.log(authHeader);
+
+    const returnedToken = authHeader.split(' ')[1];
+    // console.log(returnedToken);
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({
+        requestStatus: 'login unsuccessful: authentication rejected',
+        errorMessage: error,
+      });
+    }
+
+    const isAuthorized = jwt.verify(returnedToken, process.env.JWT_SECRET);
+
+    if (
+      !isAuthorized ||
+      isAuthorized.userId !== user._id ||
+      isAuthorized.email !== user.email
+    ) {
+      res.status(401).json({
+        requestStatus: 'login unsuccessful: authentication rejected',
+        errorMessage: error,
+      });
+    }
+
+    res
+      .status(200)
+      .json({ requestStatus: 'login successful', user: user, token: token });
   } catch (error) {
     console.log(error);
     res.status(500).json({
