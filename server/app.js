@@ -94,7 +94,6 @@ app.post('/api/sign-up', async (req, res) => {
 });
 
 // log-in user
-
 app.post('/api/log-in', async (req, res) => {
   const { email, password } = req.body;
 
@@ -154,8 +153,7 @@ app.post('/api/log-in', async (req, res) => {
 });
 
 //get single user
-
-app.get('/api/get-user/:id', authMiddleware, async (req, res) => {
+app.get('/api/get-user/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -200,7 +198,16 @@ app.get('/api/get-all-users', async (req, res) => {
 app.post('/api/create-entry', authMiddleware, async (req, res) => {
   // const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
   req.body.createdBy = req.user.userId;
-  // console.log(req.body);
+
+  // get all entries made by this user
+
+  const userEntries = await entryModel.find({ createdBy: req.user.userId });
+  console.log(userEntries.length);
+
+  // create and set entry index
+
+  const entryIndex = userEntries.length + 1;
+  req.body.entryIndex = entryIndex;
 
   try {
     const entry = await entryModel.create(req.body);
@@ -208,13 +215,15 @@ app.post('/api/create-entry', authMiddleware, async (req, res) => {
       .status(201)
       .json({ requestStatus: 'entry created successfully', entry });
   } catch (error) {
-    res.status(500).json({ errorMessage: error });
+    res.status(500).json({
+      requestStatus: 'entry creation unsuccessful',
+      errorMessage: error,
+    });
     console.log(error);
   }
 });
 
-//get single entry
-
+//get single entr
 app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 
@@ -237,7 +246,6 @@ app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
 });
 
 // get all entries
-
 app.get('/api/get-all-entries', authMiddleware, async (req, res) => {
   // console.log(req.user);
 
@@ -253,13 +261,14 @@ app.get('/api/get-all-entries', authMiddleware, async (req, res) => {
       entries: allEntries,
     });
   } catch (error) {
-    res.status(500).json({ errorMessage: error });
+    res
+      .status(500)
+      .json({ requestStatus: 'entries not fetched', errorMessage: error });
     console.log(error);
   }
 });
 
 // delete entry
-
 app.delete('/api/delete-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   console.log(id);
@@ -274,13 +283,14 @@ app.delete('/api/delete-entry/:id', authMiddleware, async (req, res) => {
       .status(200)
       .json({ requestStatus: 'entry deleted successfully', entry });
   } catch (error) {
-    res.status(500).json({ errorMessage: error });
+    res
+      .status(500)
+      .json({ requestStatus: 'entry not deleted', errorMessage: error });
     console.log(error);
   }
 });
 
 // edit entry
-
 app.patch('/api/edit-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 
@@ -307,7 +317,9 @@ app.patch('/api/edit-entry/:id', authMiddleware, async (req, res) => {
       .status(200)
       .json({ requestStatus: 'entry updated successfully', entry: entry });
   } catch (error) {
-    res.status(500).json({ errorMessage: error });
+    res
+      .status(500)
+      .json({ requestStatus: 'entry not edited', errorMessage: error });
     console.log(error);
   }
 });
