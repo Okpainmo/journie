@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 // import Link from 'next/link';
+import { useRouter } from 'next/router';
 import AppWrapper from '../components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 function CreateEntryPage() {
+  const router = useRouter();
+
   const [createEntryForm, setCreateEntryForm] = useState({
     entryTitle: '',
     entryLocation: '',
@@ -29,7 +32,13 @@ function CreateEntryPage() {
 
     const entry = await axios.post(
       'https://journie-journalling-note-taking-app.onrender.com/api/create-entry',
-      createEntryForm
+      createEntryForm,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
+          Email: `${sessionStorage.getItem('userEmail')}`,
+        },
+      }
     );
 
     console.log(entry);
@@ -45,6 +54,10 @@ function CreateEntryPage() {
         entryBody: '',
       });
     }
+
+    setTimeout(() => {
+      router.push('/profile');
+    }, 2000);
   }
 
   return (
@@ -57,7 +70,7 @@ function CreateEntryPage() {
               <span className='poppins font-bold text-purple-800 text-xl sm:text-3xl'>
                 Create an entry
               </span>
-              <p className='mt-2 text-[14px] w-[80%] mx-auto leading-7'>
+              <p className='mt-2 text-[14px] w-full sm:w-[80%] mx-auto leading-7'>
                 “Memories are the key not to the past, but to the future.”
                 <br />
                 <span className='font-bold'>~ Corrie ten Boom</span>

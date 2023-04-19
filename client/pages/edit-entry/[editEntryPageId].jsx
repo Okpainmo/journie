@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import useSWR from 'swr';
 import AppWrapper from '../../components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
 import axios from 'axios';
@@ -8,23 +10,61 @@ import FloatingButton from '@/components/FloatingButton';
 // import AppWrapper from '../components/layout/AppWrapper';
 // import AppBody from '@/components/layout/AppBody';
 
-function EditEntryPage({ entryData }) {
-  const {
-    entryTitle: title,
-    entryLocation: location,
-    entryBody: body,
-  } = entryData.entry;
+function EditEntryPage() {
+  const router = useRouter();
+
+  const { editEntryPageId } = router.query;
+  console.log(editEntryPageId);
+
+  const fetcher = (url) =>
+    fetch(url, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
+        Email: `${sessionStorage.getItem('userEmail')}`,
+      },
+    }).then((res) => res.json());
+
+  const { data, isLoading, error } = useSWR(
+    `https://journie-journalling-note-taking-app.onrender.com/api/get-entry/${editEntryPageId}`,
+    fetcher
+  );
+
+  const title = (e) => {
+    if (data) {
+      return data.entry.entryTitle;
+    }
+    // else {
+    //   return '';
+    // }
+  };
+
+  const location = (e) => {
+    if (data) {
+      return data.entry.entryLocation;
+    }
+    // else {
+    //   mutate(
+    //     `https://journie-journalling-note-taking-app.onrender.com/api/get-entry/${editEntryPageId}`
+    //   );
+    // }
+  };
+
+  const entryBody = (e) => {
+    if (data) {
+      return data.entry.entryBody;
+    }
+    // else {
+    //   return '';
+    // }
+  };
 
   const [editEntryForm, setEditEntryForm] = useState({
-    entryTitle: title,
-    entryLocation: location,
-    entryBody: body,
+    entryTitle: title(),
+    entryLocation: location(),
+    entryBody: entryBody(),
   });
 
-  console.log(title);
-
   async function editEntry(e) {
-    console.log(entryData);
     e.preventDefault();
 
     if (
@@ -39,8 +79,14 @@ function EditEntryPage({ entryData }) {
     const toastId = toast.loading('submitting edit...');
 
     const editedEntry = await axios.patch(
-      `https://journie-journalling-note-taking-app.onrender.com/api/edit-entry/${entryData.entry._id}`,
-      editEntryForm
+      `https://journie-journalling-note-taking-app.onrender.com/api/edit-entry/${data.entry._id}`,
+      editEntryForm,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
+          Email: `${sessionStorage.getItem('userEmail')}`,
+        },
+      }
     );
 
     console.log(editedEntry);
@@ -54,6 +100,26 @@ function EditEntryPage({ entryData }) {
         duration: 4000,
       });
     }
+
+    setTimeout(() => {
+      router.push('/profile');
+    }, 2000);
+  }
+
+  if (error) {
+    return (
+      <div className='mt-[300px] text-center text-purple-800 text-[16px]'>
+        failed to load: an error was encountered!!!
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className='animate-pulse mt-[300px] text-center text-purple-800 text-[16px]'>
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -66,7 +132,7 @@ function EditEntryPage({ entryData }) {
               <span className='poppins font-bold text-purple-800 text-xl sm:text-3xl'>
                 Edit an entry
               </span>
-              <p className='mt-2 text-[14px] w-[80%] mx-auto leading-7'>
+              <p className='mt-2 text-[14px] w-full sm:w-[80%] mx-auto leading-7'>
                 “Memory is the treasure house of the mind wherein the monuments
                 thereof are kept and preserved.”
                 <br />
@@ -115,7 +181,7 @@ function EditEntryPage({ entryData }) {
                   className='mt-2 px-3 py-2 border outline-none rounded'
                   type='text'
                   cols={20}
-                  rows={5}
+                  rows={10}
                   required
                   placeholder='enter your thought here'
                   value={editEntryForm.entryBody}
@@ -146,18 +212,18 @@ function EditEntryPage({ entryData }) {
 
 export default EditEntryPage;
 
-export async function getServerSideProps(context) {
-  // fetch single entry
+// export async function getServerSideProps(context) {
+//   // fetch single entry
 
-  const { params } = context;
-  const eDResponse = await fetch(
-    `https://journie-journalling-note-taking-app.onrender.com/api/get-entry/${params.editEntryPageId}`
-  );
-  const entryData = await eDResponse.json();
+//   const { params } = context;
+//   const eDResponse = await fetch(
+//     `https://journie-journalling-note-taking-app.onrender.com/api/get-entry/${params.editEntryPageId}`
+//   );
+//   const entryData = await eDResponse.json();
 
-  return {
-    props: {
-      entryData,
-    },
-  };
-}
+//   return {
+//     props: {
+//       entryData,
+//     },
+//   };
+// }

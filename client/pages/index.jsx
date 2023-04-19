@@ -1,172 +1,195 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
-import AppWrapper from '@/components/layout/AppWrapper';
-import AppBody from '@/components/layout/AppBody';
-import JournalCard from '@/components/JournalCard';
-import FloatingButton from '@/components/FloatingButton';
-import useSWR from 'swr';
-import MyModal from '@/components/MyModal';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import axios from 'axios';
-import { mutate } from 'swr';
-import { toast } from 'react-hot-toast';
-import banner from '@/assets/images/journie-banner.jpg';
+import { Toaster, toast } from 'react-hot-toast';
 
-function Home() {
-  const fetcher = (url) => fetch(url).then((res) => res.json());
+function SignUpPage() {
+  const router = useRouter();
 
-  const { data, isLoading, error } = useSWR(
-    'https://journie-journalling-note-taking-app.onrender.com/api/get-all-entries/',
-    fetcher
-  );
+  const [signUpForm, setSignUpForm] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-  console.log(data);
+  async function createUser(e) {
+    e.preventDefault();
 
-  const [entryId, setEntryId] = useState('');
-
-  const updateEntryId = (postId) => {
-    setEntryId(postId);
-    console.log(entryId);
-  };
-
-  let [isOpen, setIsOpen] = useState(false);
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  async function deleteEntry(entryId) {
-    const toastId = toast.loading('deleting entry...');
-
-    // ...
-
-    const deletedEntry = await axios.delete(
-      `https://journie-journalling-note-taking-app.onrender.com/api/delete-entry/${entryId}`
-    );
-
-    mutate(
-      'https://journie-journalling-note-taking-app.onrender.com/api/get-all-entries/'
-    );
-
-    console.log(deletedEntry);
+    console.log(signUpForm);
 
     if (
-      deletedEntry &&
-      deletedEntry.status &&
-      deletedEntry.data.requestStatus === 'entry deleted successfully'
+      signUpForm.fullName === '' ||
+      signUpForm.email === '' ||
+      signUpForm.password === '' ||
+      signUpForm.confirmPassword === ''
     ) {
-      toast.success('entry deleted successfully', {
-        id: toastId,
-        duration: 4000,
-      });
-    } else {
-      toast.error('Something went wrong - entry not deleted');
+      toast.error('please fill in all fields', { duration: 3000 });
+      return;
     }
 
-    setEntryId('');
+    if (signUpForm.password !== signUpForm.confirmPassword) {
+      toast.error('passwords do not match', { duration: 3000 });
+      return;
+    }
+
+    if (
+      signUpForm.password.length < 6 ||
+      signUpForm.confirmPassword.length < 6
+    ) {
+      toast.error('passwords must be at least 6 characters', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    const toastId = toast.loading('creating account...');
+
+    try {
+      const newUser = await axios.post(
+        'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
+        signUpForm
+      );
+
+      console.log(newUser);
+
+      if (
+        newUser &&
+        newUser.data.requestStatus === 'account created successfully'
+      ) {
+        toast.success('account created successfull', {
+          id: toastId,
+          duration: 4000,
+        });
+      }
+
+      sessionStorage.setItem('userToken', `${newUser.data.token}`);
+      sessionStorage.setItem('userEmail', `${newUser.data.user.email}`);
+
+      const userToken = sessionStorage.getItem('userToken');
+      const userEmail = sessionStorage.getItem('userEmail');
+
+      console.log(userToken, userEmail);
+
+      setSignUpForm({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      });
+
+      setTimeout(() => {
+        router.push('/profile');
+      }, 2000);
+    } catch (error) {
+      toast.error('error creating user', { id: toastId, duration: 3000 });
+      console.log(error);
+    }
   }
 
-  if (error) {
-    return (
-      <div className='mt-[300px] text-center text-purple-800 text-[16px]'>
-        failed to load: an error was encountered!!!
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className='mt-[300px] text-center text-purple-800 text-[16px]'>
-        Loading...
-      </div>
-    );
-  }
-
-  // const loggedInUser = localStorage.getItem('journieUser');
-  // console.log(loggedInUser.slice(1, loggedInUser.length - 1));
-
-  // if (local)
   return (
-    <AppWrapper>
-      <AppBody>
-        <MyModal
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          closeModal={closeModal}
-          openModal={openModal}
-          deleteEntry={deleteEntry}
-          entryId={entryId}
-        />
-        <section className='page-intro'>
-          <h2 className='text-2xl poppins mb-4 font-bold'>My Entries</h2>
-
-          <Image
-            src={banner}
-            alt='journie banner'
-            className='w-full lg:h-[300px] bg-contain'
-          />
-          <div className='intro-text lg:w-[80%]'>
-            <div className='py-4 sm:text-[14px]'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam,
-              quam recusandae consequatur nulla quis in repudiandae quo quidem
-              nihil aspernatur, alias, vitae similique? Neque iure officia sint
-              necessitatibus ipsam accusamus veniam praesentium ex qui facere
-              nisi, ipsum nostrum pariatur.
-            </div>
+    <>
+      <Toaster />
+      <main className='login-page mx-3 px-3 pt-6 pb-10 mt-20 sm:mt-40 rounded border sm:w-[400px] sm:mx-auto'>
+        <div className='flex sm:px-3 flex-col gap-8'>
+          {/* <Link href='/'> */}
+          <div className='logo-wrapper poppins font-bold text-purple-800 text-xl sm:text-3xl text-center'>
+            Journie/sign up
           </div>
-        </section>
-        <section className='jobs mb-3 py-3 flex flex-wrap md:gap-x-[2%] xl:gap-x-[5%]'>
-          {data.entries.length < 1 ? (
-            <div className='mt-10 text-center text-purple-800 text-[14px] w-[75%] sm:w-[500px] mx-auto'>
-              Opps!!! it seems you have not made any journal entries yet
-            </div>
-          ) : (
-            data.entries.map((entry) => (
-              <JournalCard
-                key={entry._id}
-                entry={entry}
-                openModal={openModal}
-                updateEntryId={updateEntryId}
+          <p className='mt-2 text-[14px] w-full mx-auto leading-7 text-center'>
+            “Memory is the diary we all carry about with us.”
+            <br />
+            <span className='font-bold'>~ Oscar Wilde</span>
+          </p>
+          {/* </Link> */}
+          <form>
+            <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+              <label htmlFor='full-name'>Full name</label>
+              <input
+                className='mt-2 px-3 py-2 border outline-none rounded'
+                type='text'
+                required
+                placeholder='please input your full name'
+                value={signUpForm.fullName}
+                onChange={(e) => {
+                  setSignUpForm({
+                    ...signUpForm,
+                    fullName: e.target.value,
+                  });
+                }}
+                id='fullName'
               />
-            ))
-          )}
-          {/* <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard /> */}
-        </section>
-        <FloatingButton />
-      </AppBody>
-    </AppWrapper>
+            </div>
+            <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+              <label htmlFor='email'>email</label>
+              <input
+                className='mt-2 px-3 py-2 border outline-none rounded'
+                type='email'
+                required
+                placeholder='please add your email address'
+                value={signUpForm.email}
+                onChange={(e) => {
+                  setSignUpForm({
+                    ...signUpForm,
+                    email: e.target.value,
+                  });
+                }}
+                id='email'
+              />
+            </div>
+            <div className='password input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+              <label htmlFor='password'>Password</label>
+              <input
+                className='mt-2 px-3 py-2 border outline-none rounded'
+                type='text'
+                required
+                placeholder='please input your password'
+                value={signUpForm.password}
+                onChange={(e) => {
+                  setSignUpForm({
+                    ...signUpForm,
+                    password: e.target.value,
+                  });
+                }}
+                id='password'
+              />
+            </div>
+            <div className='confirm-password input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+              <label htmlFor='confirm-password'>Confirm Password</label>
+              <input
+                className='mt-2 px-3 py-2 border outline-none rounded'
+                type='text'
+                required
+                placeholder='re-enter password to confirm'
+                value={signUpForm.confirmPassword}
+                onChange={(e) => {
+                  setSignUpForm({
+                    ...signUpForm,
+                    confirmPassword: e.target.value,
+                  });
+                }}
+                id='confirm-password'
+              />
+            </div>
+            <button
+              type='button'
+              onClick={createUser}
+              className='submit text-center bg-green-500 py-3 text-[12px] sm:text-[14px] text-white rounded w-full'
+            >
+              Submit
+            </button>
+            <p className='text-center text-[12px] sm:text-[14px] mt-4'>
+              Have an account?{' '}
+              <Link href='/log-in' className='underline text-purple-800 '>
+                log-in instead
+              </Link>{' '}
+            </p>
+          </form>
+        </div>
+      </main>
+    </>
   );
 }
-// }
 
-export default Home;
-
-// export async function getServerSideProps() {
-//   // fetch entries
-
-//   // const { params } = context;
-//   const eDResponse = await fetch(
-//     'https://journie-journalling-note-taking-app.onrender.com/api/get-all-entries/'
-//   );
-//   const entriesData = await eDResponse.json();
-
-//   // console.log(entriesData);
-
-//   return {
-//     props: {
-//       entriesData,
-//     },
-//   };
-// }
+export default SignUpPage;

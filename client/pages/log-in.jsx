@@ -19,27 +19,33 @@ function LoginPage() {
 
     const toastId = toast.loading('logging in...');
 
-    const loggedInUser = await axios.post(
-      'https://journie-journalling-note-taking-app.onrender.com/api/log-in',
-      loginForm
-    );
-
-    console.log(loggedInUser);
-
-    if (
-      loggedInUser &&
-      loggedInUser.data.requestStatus === 'login successful'
-    ) {
-      toast.success('login successful', {
-        id: toastId,
-        duration: 4000,
-      });
-      localStorage.setItem(
-        'journieUser',
-        JSON.stringify(loggedInUser.data.user._id)
+    try {
+      const loggedInUser = await axios.post(
+        'https://journie-journalling-note-taking-app.onrender.com/api/log-in',
+        loginForm
       );
-      router.push('/');
-    } else {
+
+      if (
+        loggedInUser &&
+        loggedInUser.data.requestStatus === 'login successful'
+      ) {
+        toast.success('login successful', {
+          id: toastId,
+          duration: 4000,
+        });
+        localStorage.setItem(
+          'journieUser',
+          JSON.stringify(loggedInUser.data.user._id)
+        );
+
+        setTimeout(() => {
+          router.push('/profile');
+        }, 2000);
+      }
+
+      console.log(loggedInUser);
+    } catch (error) {
+      console.log(error);
       toast.error('login failed... please try again with correct credentials', {
         id: toastId,
         duration: 4000,
@@ -56,6 +62,11 @@ function LoginPage() {
           <div className='logo-wrapper poppins font-bold text-purple-800 text-xl sm:text-3xl text-center'>
             Journie/login
           </div>
+          <p className='mt-2 text-[14px] w-full mx-auto leading-7 text-center'>
+            “Humans, not places, make memories.”
+            <br />
+            <span className='font-bold'>~ Ama Ata Aidoo</span>
+          </p>
           {/* </Link> */}
           <form>
             <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
@@ -101,7 +112,7 @@ function LoginPage() {
             </button>
             <p className='text-center text-[12px] sm:text-[14px] mt-4'>
               New to Journie?{' '}
-              <Link href='/sign-up' className='underline text-purple-800'>
+              <Link href='/' className='underline text-purple-800'>
                 sign-up instead
               </Link>{' '}
             </p>
