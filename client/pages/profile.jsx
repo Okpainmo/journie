@@ -81,12 +81,12 @@ function ProfilePage() {
     setEntryId('');
   }
 
-  if (
-    !sessionStorage.getItem('userToken') ||
-    !sessionStorage.getItem('userEmail')
-  ) {
-    router.push('/');
-  }
+  // const userToken = sessionStorage.getItem('userToken');
+  // const userEmail = sessionStorage.getItem('userEmail');
+
+  // if (!userToken || !userEmail) {
+  //   router.push('/');
+  // }
 
   if (error) {
     return (
