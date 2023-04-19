@@ -12,6 +12,13 @@ import { toast } from 'react-hot-toast';
 import banner from '@/assets/images/journie-banner.jpg';
 
 function ProfilePage() {
+  // const userToken = sessionStorage.getItem('userToken');
+  // const userEmail = sessionStorage.getItem('userEmail');
+
+  // if (!sessionStorage || !userToken || !userEmail) {
+  //   router.push('/');
+  // }
+
   const fetcher = (url) =>
     fetch(url, {
       headers: {
@@ -80,13 +87,6 @@ function ProfilePage() {
 
     setEntryId('');
   }
-
-  // const userToken = sessionStorage.getItem('userToken');
-  // const userEmail = sessionStorage.getItem('userEmail');
-
-  // if (!userToken || !userEmail) {
-  //   router.push('/');
-  // }
 
   if (error) {
     return (

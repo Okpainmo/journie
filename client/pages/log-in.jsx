@@ -33,10 +33,14 @@ function LoginPage() {
           id: toastId,
           duration: 4000,
         });
-        localStorage.setItem(
-          'journieUser',
-          JSON.stringify(loggedInUser.data.user._id)
-        );
+
+        sessionStorage.setItem('userToken', `${loggedInUser.data.token}`);
+        sessionStorage.setItem('userEmail', `${loggedInUser.data.user.email}`);
+
+        const userToken = sessionStorage.getItem('userToken');
+        const userEmail = sessionStorage.getItem('userEmail');
+
+        console.log(userToken, userEmail);
 
         setTimeout(() => {
           router.push('/profile');
