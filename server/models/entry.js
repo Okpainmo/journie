@@ -20,15 +20,15 @@ const entrySchema = new mongoose.Schema(
     },
     entryIndex: {
       type: Number,
-      required: [
-        true,
-        'correct entry index is absent - there seem to be a client-side programming error',
-      ],
+      // required: [
+      //   true,
+      //   'correct entry index is absent - there seem to be a client-side programming error',
+      // ],
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: 'user',
-      required: [true, 'User not provided'],
+      // required: [true, 'User not provided'],
     },
   },
   { timestamps: true }

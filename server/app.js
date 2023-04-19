@@ -41,37 +41,45 @@ app.get('/api', (req, res) => {
 app.post('/api/sign-up', async (req, res) => {
   const { fullName, email, password, confirmPassword } = req.body;
 
-  try {
-    // check if all fields are filled
+  // check if all fields are filled
 
-    if (!fullName || !email || !password || !confirmPassword) {
-      res.status(400).json({
-        requestStatus: 'account creation failed: please fill in all fields',
-      });
-    }
-
-    // hashing passwors for security
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    // console.log(hashedPassword);
-
-    const hashedConfirmPassword = await bcrypt.hash(confirmPassword, salt);
-    // console.log(hashedConfirmPassword);
-
-    // create user with hashed password
-
-    const user = await userModel.create({
-      fullName: fullName,
-      email: email,
-      password: hashedPassword,
-      confirmPassword: hashedConfirmPassword,
+  if (!fullName || !email || !password || !confirmPassword) {
+    return res.status(400).json({
+      requestStatus: 'account creation failed: please fill in all fields',
     });
+  }
 
-    console.log(user);
+  // reject passwords if less than 6 characters
 
+  if (password.length < 6 || confirmPassword.length < 6) {
+    return res.status(400).json({
+      requestStatus:
+        'account creation failed: password must be at least 6 characters',
+    });
+  }
+
+  // hashing passwords for security
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  // console.log(hashedPassword);
+
+  const hashedConfirmPassword = await bcrypt.hash(confirmPassword, salt);
+  // console.log(hashedConfirmPassword);
+
+  // create user with hashed password
+
+  const user = await userModel.create({
+    fullName: fullName,
+    email: email,
+    password: hashedPassword,
+    confirmPassword: hashedConfirmPassword,
+  });
+
+  // console.log(user);
+
+  try {
     // create token
-
     const token = jwt.sign(
       { userId: user._id, userEmail: user.email },
       process.env.JWT_SECRET,
@@ -97,41 +105,41 @@ app.post('/api/sign-up', async (req, res) => {
 app.post('/api/log-in', async (req, res) => {
   const { email, password } = req.body;
 
+  // check if email and password are provided
+
+  if (!email || !password) {
+    return res.status(400).json({
+      requestStatus: 'login unsuccessful: email or password not provided',
+      errorMessage: error,
+    });
+  }
+
+  // find user by email
+
+  const user = await userModel.findOne({ email: email });
+
+  // return error if user is not valid
+
+  if (!user) {
+    return res.status(404).json({
+      requestStatus: 'login unsuccessful: user not found',
+      errorMessage: error,
+    });
+  }
+
+  // compare hashed password with password in db
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  // console.log(isMatch);
+
+  if (!isMatch) {
+    return res.status(401).json({
+      requestStatus: 'login unsuccessful: password does not match',
+      errorMessage: error,
+    });
+  }
+
   try {
-    // check if email and password are provided
-
-    if (!email || !password) {
-      res.status(400).json({
-        requestStatus: 'login unsuccessful: email or password not provided',
-        errorMessage: error,
-      });
-    }
-
-    // find user by email and password
-
-    const user = await userModel.findOne({ email: email });
-
-    // return error if user is not valid
-
-    if (!user) {
-      res.status(404).json({
-        requestStatus: 'login unsuccessful: user not found',
-        errorMessage: error,
-      });
-    }
-
-    // compare hashed password with password in db
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    // console.log(isMatch);
-
-    if (!isMatch) {
-      res.status(401).json({
-        requestStatus: 'login unsuccessful: password does not match',
-        errorMessage: error,
-      });
-    }
-
     // create token
 
     const token = jwt.sign(
@@ -144,7 +152,6 @@ app.post('/api/log-in', async (req, res) => {
       .status(200)
       .json({ requestStatus: 'login successful', user: user, token: token });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       requestStatus: 'login unsuccessful: user not returned',
       errorMessage: error,
@@ -160,7 +167,7 @@ app.get('/api/get-user/:id', async (req, res) => {
     const user = await userModel.findOne({ _id: id });
 
     if (!user) {
-      res.status(404).json({
+      return res.status(404).json({
         requestStatus: 'request unseccessful',
         errorMessage: 'user not found',
       });
@@ -181,6 +188,7 @@ app.get('/api/get-user/:id', async (req, res) => {
 app.get('/api/get-all-users', async (req, res) => {
   try {
     const allUsers = await userModel.find({});
+
     res.status(200).json({
       requestStatus: 'users fetched successfully',
       count: allUsers.length,
@@ -196,7 +204,6 @@ app.get('/api/get-all-users', async (req, res) => {
 
 // create entry;
 app.post('/api/create-entry', authMiddleware, async (req, res) => {
-  // const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
   req.body.createdBy = req.user.userId;
 
   // get all entries made by this user
@@ -223,7 +230,7 @@ app.post('/api/create-entry', authMiddleware, async (req, res) => {
   }
 });
 
-//get single entr
+//get single entry
 app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 
@@ -231,7 +238,7 @@ app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
     const entry = await entryModel.findOne({ _id: id });
 
     if (!entry) {
-      res.status(404).json({
+      return res.status(404).json({
         requestStatus: 'erequest unseccessful',
         errorMessage: 'entry not found',
       });
@@ -247,11 +254,9 @@ app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
 
 // get all entries
 app.get('/api/get-all-entries', authMiddleware, async (req, res) => {
-  // console.log(req.user);
+  console.log(req.user);
 
   try {
-    // const user = await userModel.findOne({ _id: req.user.userId });
-
     const allEntries = await entryModel.find({ createdBy: req.user.userId });
 
     res.status(200).json({
@@ -272,6 +277,7 @@ app.get('/api/get-all-entries', authMiddleware, async (req, res) => {
 app.delete('/api/delete-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   console.log(id);
+
   try {
     const entry = await entryModel.findByIdAndRemove({ _id: id });
 

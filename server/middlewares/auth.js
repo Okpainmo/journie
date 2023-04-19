@@ -2,15 +2,6 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 
 const authMiddleware = async (req, res, next) => {
-  // create token
-
-  // const token = jwt.sign(
-  //   { userId: user._id, userEmail: user.email },
-  //   process.env.JWT_SECRET,
-  //   { expiresIn: process.env.JWT_LIFETIME }
-  // );
-  // // console.log(token);
-
   const userEmail = req.headers.email;
   // console.log(userEmail);
 
