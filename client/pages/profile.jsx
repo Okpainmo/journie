@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import AppWrapper from '@/components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
 import JournalCard from '@/components/JournalCard';
@@ -78,6 +79,13 @@ function ProfilePage() {
     }
 
     setEntryId('');
+  }
+
+  if (
+    !sessionStorage.getItem('userToken') ||
+    !sessionStorage.getItem('userEmail')
+  ) {
+    router.push('/');
   }
 
   if (error) {
