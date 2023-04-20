@@ -18,12 +18,10 @@ const app = express();
 const dbConnector = require('./db/connect-db');
 
 // models
-
 const userModel = require('./models/user');
 const entryModel = require('./models/entry');
 
 // middlewares
-
 const authMiddleware = require('./middlewares/auth');
 
 // express middleware for handling json data in post-requests
@@ -204,6 +202,7 @@ app.get('/api/get-all-users', async (req, res) => {
 
 // create entry;
 app.post('/api/create-entry', authMiddleware, async (req, res) => {
+  console.log(user);
   req.body.createdBy = req.user.userId;
 
   // get all entries made by this user
@@ -233,9 +232,11 @@ app.post('/api/create-entry', authMiddleware, async (req, res) => {
 //get single entry
 app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
+  console.log(req.user);
 
   try {
     const entry = await entryModel.findOne({ _id: id });
+    const user = await userModel.findOne({ _id: req.user.userId });
 
     if (!entry) {
       return res.status(404).json({
@@ -246,7 +247,11 @@ app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
 
     res
       .status(200)
-      .json({ requestStatus: 'entry fetched successfully', entry: entry });
+      .json({
+        requestStatus: 'entry fetched successfully',
+        entryOwner: user,
+        entry: entry,
+      });
   } catch (error) {
     res.status(500).json({ errorMessage: error });
   }
@@ -258,10 +263,11 @@ app.get('/api/get-all-entries', authMiddleware, async (req, res) => {
 
   try {
     const allEntries = await entryModel.find({ createdBy: req.user.userId });
+    const user = await userModel.findOne({ _id: req.user.userId });
 
     res.status(200).json({
       requestStatus: 'entries fetched successfully',
-      // user: user,
+      entriesOwner: user,
       count: allEntries.length,
       entries: allEntries,
     });
