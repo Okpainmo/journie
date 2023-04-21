@@ -1,6 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import NavPopOver from '../NavPopOver';
+import dynamic from 'next/dynamic';
+
+// import NavPopOver from '../NavPopOver';
+
+const StaticPopOver = dynamic(() => import('../NavPopOver'), {
+  ssr: false,
+});
 
 function Navbar() {
   return (
@@ -21,7 +27,7 @@ function Navbar() {
             sign out
           </button>
         </Link>
-        <NavPopOver />
+        <StaticPopOver />
       </div>
     </nav>
   );

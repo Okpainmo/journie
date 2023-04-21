@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 // import Link from 'next/link';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,6 +7,8 @@ import { Popover } from '@headlessui/react';
 import mockDP from '../assets/images/sample.jpg';
 
 function NavPopOver() {
+  // const [user, setUser] = useState({ name: '', email: '' });
+
   const features = [
     {
       name: 'My todos/Schedules',
@@ -55,6 +57,13 @@ function NavPopOver() {
       router.push('/');
     }, 1000);
   }
+
+  // if (typeof window !== 'undefined') {
+
+  //   if (userName && userEmail) {
+  //     setUser({ name: userName, email: userEmail });
+  //   }
+  // }
 
   return (
     <Popover className='relative rounded'>
