@@ -4,185 +4,124 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
 
-function SignUpPage() {
+function LoginPage() {
   const router = useRouter();
 
-  const [signUpForm, setSignUpForm] = useState({
-    fullName: '',
+  const [loginForm, setLoginForm] = useState({
     email: '',
     password: '',
-    confirmPassword: '',
   });
 
-  async function createUser(e) {
+  const logInUser = async (e) => {
     e.preventDefault();
 
-    console.log(signUpForm);
+    console.log(loginForm);
 
-    if (
-      signUpForm.fullName === '' ||
-      signUpForm.email === '' ||
-      signUpForm.password === '' ||
-      signUpForm.confirmPassword === ''
-    ) {
-      toast.error('please fill in all fields', { duration: 3000 });
-      return;
-    }
-
-    if (signUpForm.password !== signUpForm.confirmPassword) {
-      toast.error('passwords do not match', { duration: 3000 });
-      return;
-    }
-
-    if (
-      signUpForm.password.length < 6 ||
-      signUpForm.confirmPassword.length < 6
-    ) {
-      toast.error('passwords must be at least 6 characters', {
-        duration: 3000,
-      });
-      return;
-    }
-
-    const toastId = toast.loading('creating account...');
+    const toastId = toast.loading('logging in...');
 
     try {
-      const newUser = await axios.post(
-        'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
-        signUpForm
+      const loggedInUser = await axios.post(
+        'https://journie-journalling-note-taking-app.onrender.com/api/log-in',
+        loginForm
       );
 
-      console.log(newUser);
-
       if (
-        newUser &&
-        newUser.data.requestStatus === 'account created successfully'
+        loggedInUser &&
+        loggedInUser.data.requestStatus === 'login successful'
       ) {
-        toast.success('account created successfull', {
+        toast.success('login successful', {
           id: toastId,
           duration: 4000,
         });
+
+        sessionStorage.setItem('userToken', `${loggedInUser.data.token}`);
+        sessionStorage.setItem('userEmail', `${loggedInUser.data.user.email}`);
+
+        const userToken = sessionStorage.getItem('userToken');
+        const userEmail = sessionStorage.getItem('userEmail');
+
+        console.log(userToken, userEmail);
+
+        setTimeout(() => {
+          router.push('/profile');
+        }, 1000);
       }
 
-      sessionStorage.setItem('userToken', `${newUser.data.token}`);
-      sessionStorage.setItem('userEmail', `${newUser.data.user.email}`);
+      console.log(loggedInUser);
 
-      const userToken = sessionStorage.getItem('userToken');
-      const userEmail = sessionStorage.getItem('userEmail');
-
-      console.log(userToken, userEmail);
-
-      setSignUpForm({
-        fullName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      });
-
-      setTimeout(() => {
-        router.push('/profile');
-      }, 2000);
+      const userName = loggedInUser.data.user.fullName;
+      // console.log(userName);
+      sessionStorage.setItem('userName', `${userName}`);
     } catch (error) {
-      toast.error('error creating user', { id: toastId, duration: 3000 });
       console.log(error);
+      toast.error('login failed... please try again with correct credentials', {
+        id: toastId,
+        duration: 4000,
+      });
     }
-  }
+  };
 
   return (
     <>
       <Toaster />
-      <main className='login-page mx-3 px-3 pt-6 pb-10 mt-20 sm:mt-40 rounded border sm:w-[400px] sm:mx-auto'>
-        <div className='flex sm:px-3 flex-col gap-8'>
+      <main className='login-page pt-12 pb-16 my-20 sm:my-40 mx-3 px-3 rounded border sm:w-[400px] sm:mx-auto'>
+        <div className='flex flex-col sm:px-3 gap-8'>
           {/* <Link href='/'> */}
           <div className='logo-wrapper poppins font-bold text-purple-800 text-xl sm:text-3xl text-center'>
-            Journie/sign up
+            Journie/login
           </div>
           <p className='mt-2 text-[14px] w-full mx-auto leading-7 text-center'>
-            “Memory is the diary we all carry about with us.”
+            “Memory is the treasury and guardian of all things.”
             <br />
-            <span className='font-bold'>~ Oscar Wilde</span>
+            <span className='font-bold'>~ Cicero</span>
           </p>
           {/* </Link> */}
           <form>
-            <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-              <label htmlFor='full-name'>Full name</label>
-              <input
-                className='mt-2 px-3 py-2 border outline-none rounded'
-                type='text'
-                required
-                placeholder='please input your full name'
-                value={signUpForm.fullName}
-                onChange={(e) => {
-                  setSignUpForm({
-                    ...signUpForm,
-                    fullName: e.target.value,
-                  });
-                }}
-                id='fullName'
-              />
-            </div>
             <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
               <label htmlFor='email'>email</label>
               <input
                 className='mt-2 px-3 py-2 border outline-none rounded'
                 type='email'
                 required
-                placeholder='please add your email address'
-                value={signUpForm.email}
+                placeholder='please input your username'
+                value={loginForm.email}
                 onChange={(e) => {
-                  setSignUpForm({
-                    ...signUpForm,
+                  setLoginForm({
+                    ...loginForm,
                     email: e.target.value,
                   });
                 }}
                 id='email'
               />
             </div>
-            <div className='password input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-              <label htmlFor='password'>Password</label>
+            <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+              <label htmlFor='username'>Password</label>
               <input
                 className='mt-2 px-3 py-2 border outline-none rounded'
-                type='text'
+                type='password'
                 required
                 placeholder='please input your password'
-                value={signUpForm.password}
+                value={loginForm.password}
                 onChange={(e) => {
-                  setSignUpForm({
-                    ...signUpForm,
+                  setLoginForm({
+                    ...loginForm,
                     password: e.target.value,
                   });
                 }}
                 id='password'
               />
             </div>
-            <div className='confirm-password input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-              <label htmlFor='confirm-password'>Confirm Password</label>
-              <input
-                className='mt-2 px-3 py-2 border outline-none rounded'
-                type='text'
-                required
-                placeholder='re-enter password to confirm'
-                value={signUpForm.confirmPassword}
-                onChange={(e) => {
-                  setSignUpForm({
-                    ...signUpForm,
-                    confirmPassword: e.target.value,
-                  });
-                }}
-                id='confirm-password'
-              />
-            </div>
             <button
               type='button'
-              onClick={createUser}
+              onClick={logInUser}
               className='submit text-center bg-green-500 py-3 text-[12px] sm:text-[14px] text-white rounded w-full'
             >
               Submit
             </button>
             <p className='text-center text-[12px] sm:text-[14px] mt-4'>
-              Have an account?{' '}
-              <Link href='/log-in' className='underline text-purple-800 '>
-                log-in instead
+              New to Journie?{' '}
+              <Link href='/sign-up' className='underline text-purple-800'>
+                sign-up instead
               </Link>{' '}
             </p>
           </form>
@@ -192,4 +131,4 @@ function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+export default LoginPage;

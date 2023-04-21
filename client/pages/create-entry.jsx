@@ -113,12 +113,12 @@ function CreateEntryPage() {
                 />
               </div>
               <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-                <label htmlFor='entry-location'>Entry body</label>
+                <label htmlFor='entry-body'>Entry body</label>
                 <p className='text-purple-800 text-[10px] mt-2 underline'>
                   create amazing journals with the help of Journie&rsquo;s
-                  special syntax. Simply split your memories into well
-                  structured notes by adding a single asterick between each
-                  paragraph.
+                  special syntax. Simply split your memories, tasks, or notes
+                  into well structured entries by adding a single asterick
+                  between each paragraph.
                 </p>
                 <textarea
                   className='mt-2 px-3 py-2 border outline-none rounded'
@@ -134,7 +134,7 @@ function CreateEntryPage() {
                       entryBody: e.target.value,
                     });
                   }}
-                  id='entry-location'
+                  id='entry-body'
                 ></textarea>
               </div>
               <button

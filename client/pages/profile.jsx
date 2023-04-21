@@ -7,18 +7,13 @@ import JournalCard from '@/components/JournalCard';
 import FloatingButton from '@/components/FloatingButton';
 import useSWR, { mutate } from 'swr';
 import MyModal from '@/components/MyModal';
+import Preloader from '@/components/Preloader';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import banner from '@/assets/images/journie-banner.jpg';
+import Emoji from '@/components/Emoji';
 
 function ProfilePage() {
-  // const userToken = sessionStorage.getItem('userToken');
-  // const userEmail = sessionStorage.getItem('userEmail');
-
-  // if (!sessionStorage || !userToken || !userEmail) {
-  //   router.push('/');
-  // }
-
   const fetcher = (url) =>
     fetch(url, {
       headers: {
@@ -38,7 +33,6 @@ function ProfilePage() {
 
   const updateEntryId = (postId) => {
     setEntryId(postId);
-    console.log(entryId);
   };
 
   let [isOpen, setIsOpen] = useState(false);
@@ -97,17 +91,10 @@ function ProfilePage() {
   }
 
   if (isLoading) {
-    return (
-      <div className='animate-pulse mt-[300px] text-center text-purple-800 text-[16px]'>
-        Loading...
-      </div>
-    );
+    return <Preloader />;
   }
 
-  // const loggedInUser = localStorage.getItem('journieUser');
-  // console.log(loggedInUser.slice(1, loggedInUser.length - 1));
-
-  // if (local)
+  const userFirstName = sessionStorage.getItem('userName').split(' ')[0];
   return (
     <AppWrapper>
       <AppBody>
@@ -120,12 +107,18 @@ function ProfilePage() {
           entryId={entryId}
         />
         <section className='page-intro'>
-          <h2 className='text-2xl poppins mb-4 font-bold'>My Entries</h2>
+          <h2 className='text-2xl sm:text-3xl sm:mb-8 poppins mb-4 font-bold'>
+            Hi {userFirstName}{' '}
+            <div className='text-4xl inline-block'>
+              <Emoji label='wave' symbol='👋' />
+            </div>
+          </h2>
 
           <Image
             src={banner}
             alt='journie banner'
             className='w-full lg:h-[300px] bg-contain'
+            placeholder='blur'
           />
           <div className='intro-text lg:w-[80%]'>
             <div className='py-4 sm:text-[14px]'>

@@ -12,14 +12,18 @@ function JournalCard({ entry, openModal, updateEntryId }) {
 
   return (
     <main
-      className='w-[100%] journal-card rounded shadow my-4 sm:my-6 md:w-[48%] xl:w-[30%] opacity-0'
-      style={{ transition: 'opacity .75s ease-in', opacity: '1' }}
+      className='w-[100%] journal-card rounded my-4 sm:my-6 md:w-[48%] xl:w-[30%] opacity-0'
+      style={{
+        transition: 'opacity .75s ease-in',
+        opacity: '1',
+        boxShadow: '0 0 10px -5px grey',
+      }}
     >
       <section
-        className='flex gap-8 sm:gap-16 md:gap-8 items-center px-4 py-2 min-h-[100px] justify-between'
+        className='flex items-center px-4 py-2 min-h-[100px] justify-between'
         // style={{ alignSelf: 'flex-start' }}
       >
-        <div className='icon  w-[12%]'>
+        <div className='icon  w-[10%]'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
@@ -48,7 +52,7 @@ function JournalCard({ entry, openModal, updateEntryId }) {
           </div>
         </Link>
         <button
-          className='delete w-[12%]'
+          className='delete w-[10%]'
           onClick={() => {
             openModal();
             updateEntryId(postId);

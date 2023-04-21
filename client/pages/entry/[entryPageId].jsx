@@ -6,7 +6,8 @@ import useSWR from 'swr';
 import AppWrapper from '@/components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
 // import sampleImage from '@/assets/images/sample.jpg';
-import FloatingButton from '@/components/FloatingButton';
+// import FloatingButton from '@/components/FloatingButton';
+import Preloader from '@/components/Preloader';
 // import EditEntryOverlay from '@/components/EditEntryOverlay';
 
 function EntryPage() {
@@ -48,11 +49,7 @@ function EntryPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className='animate-pulse mt-[300px] text-center text-purple-800 text-[16px]'>
-        Loading...
-      </div>
-    );
+    return <Preloader />;
   }
 
   return (
@@ -113,7 +110,7 @@ function EntryPage() {
           </div>
         )}
 
-        <FloatingButton />
+        {/* <FloatingButton /> */}
       </AppBody>
     </AppWrapper>
   );

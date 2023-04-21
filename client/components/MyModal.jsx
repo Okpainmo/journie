@@ -44,7 +44,7 @@ function MyModal({
                 </Dialog.Title>
                 <div className='mt-2'>
                   <p className='text-sm text-gray-500'>
-                    You are about to delete an entry. Are you sure you wish to
+                    You are about to delete an entry. Are you sure you want to
                     continue?
                   </p>
                 </div>

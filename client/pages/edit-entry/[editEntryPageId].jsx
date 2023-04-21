@@ -5,7 +5,8 @@ import AppWrapper from '../../components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import FloatingButton from '@/components/FloatingButton';
+// import FloatingButton from '@/components/FloatingButton';
+import Preloader from '@/components/Preloader';
 // import Link from 'next/link';
 // import AppWrapper from '../components/layout/AppWrapper';
 // import AppBody from '@/components/layout/AppBody';
@@ -115,11 +116,7 @@ function EditEntryPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className='animate-pulse mt-[300px] text-center text-purple-800 text-[16px]'>
-        Loading...
-      </div>
-    );
+    return <Preloader />;
   }
 
   return (
@@ -176,7 +173,13 @@ function EditEntryPage() {
                 />
               </div>
               <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-                <label htmlFor='entry-location'>Entry body</label>
+                <label htmlFor='entry-body'>Entry body</label>
+                <p className='text-purple-800 text-[10px] mt-2 underline'>
+                  create amazing journals with the help of Journie&rsquo;s
+                  special syntax. Simply split your memories, tasks, or notes
+                  into well structured entries by adding a single asterick
+                  between each paragraph.
+                </p>
                 <textarea
                   className='mt-2 px-3 py-2 border outline-none rounded'
                   type='text'
@@ -191,7 +194,7 @@ function EditEntryPage() {
                       entryBody: e.target.value,
                     });
                   }}
-                  id='entry-location'
+                  id='entry-body'
                 ></textarea>
               </div>
               <button
@@ -204,7 +207,7 @@ function EditEntryPage() {
             </form>
           </div>
         </main>
-        <FloatingButton />
+        {/* <FloatingButton /> */}
       </AppBody>
     </AppWrapper>
   );

@@ -9,7 +9,7 @@ function MainAppLayout({ children }) {
   return (
     <>
       <Toaster />
-      <main className='nunito-sans text-[12px] sm:text-[14px] px-3 sm:px-20 md:px-5 lg:w-[80%] xl:w-[70%] lg:mx-auto lg:px-0'>
+      <main className='nunito-sans text-[12px] sm:text-[14px] px-3 sm:px-20 md:px-5 lg:w-[80%] xl:w-[80%] lg:mx-auto lg:px-0'>
         <Navbar />
         {children}
         <Footer />
