@@ -4,7 +4,7 @@ import Link from 'next/link';
 // import Image from 'next/image';
 // import sampleImage from '@/assets/images/sample.jpg';
 
-function JournalCard({ entry, openModal, updateEntryId }) {
+function EntryCard({ entry, openModal, updateEntryId }) {
   // console.log(entry._id);
   const postId = entry._id;
 
@@ -12,7 +12,7 @@ function JournalCard({ entry, openModal, updateEntryId }) {
 
   return (
     <main
-      className='w-[100%] journal-card rounded my-4 sm:my-6 md:w-[48%] xl:w-[30%] opacity-0'
+      className='w-[100%] journal-card rounded my-3 sm:my-6 md:w-[48%] xl:w-[30%] opacity-0'
       style={{
         transition: 'opacity .75s ease-in',
         opacity: '1',
@@ -78,4 +78,4 @@ function JournalCard({ entry, openModal, updateEntryId }) {
   );
 }
 
-export default JournalCard;
+export default EntryCard;

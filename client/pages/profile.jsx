@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
+import Link from 'next/link';
 import AppWrapper from '@/components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
-import JournalCard from '@/components/JournalCard';
+import EntryCard from '@/components/EntryCard';
 import FloatingButton from '@/components/FloatingButton';
 import useSWR, { mutate } from 'swr';
 import MyModal from '@/components/MyModal';
@@ -84,9 +85,18 @@ function ProfilePage() {
 
   if (error) {
     return (
-      <div className='mt-[300px] text-center text-purple-800 text-[16px]'>
-        failed to load: an error was encountered!!!
-      </div>
+      <main className='flex flex-col item-center'>
+        <div className='mt-[300px] mb-4 text-center text-purple-800 text-[16px]'>
+          failed to load: an error was encountered!!!
+        </div>
+        <Link
+          type='button'
+          href='/'
+          className='submit text-center bg-green-500 py-3 text-[12px] sm:text-[14px] text-white rounded w-[150px] mx-auto'
+        >
+          return to login
+        </Link>
+      </main>
     );
   }
 
@@ -130,7 +140,7 @@ function ProfilePage() {
             </div>
           </div>
         </section>
-        <section className='jobs mb-3 py-3 flex flex-wrap md:gap-x-[2%] xl:gap-x-[5%]'>
+        <section className='jobs py-3 flex flex-wrap md:gap-x-[2%] xl:gap-x-[5%]'>
           {data.entries.length < 1 ? (
             <div className='mt-10 text-center text-purple-800 text-[14px] w-[75%] sm:w-[500px] mx-auto'>
               Opps!!! your journal is empty... your entries will show up here
@@ -138,7 +148,7 @@ function ProfilePage() {
             </div>
           ) : (
             data.entries.map((entry) => (
-              <JournalCard
+              <EntryCard
                 key={entry._id}
                 entry={entry}
                 openModal={openModal}
@@ -146,16 +156,6 @@ function ProfilePage() {
               />
             ))
           )}
-          {/* <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard />
-            <JournalCard /> */}
         </section>
         <FloatingButton />
       </AppBody>

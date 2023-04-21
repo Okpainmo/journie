@@ -16,6 +16,9 @@ function LoginPage() {
     e.preventDefault();
 
     console.log(loginForm);
+    if (loginForm.email === '' || loginForm.password === '') {
+      return toast.error('please fill in all fields', { duration: 3000 });
+    }
 
     const toastId = toast.loading('logging in...');
 
@@ -78,7 +81,7 @@ function LoginPage() {
           {/* </Link> */}
           <form>
             <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-              <label htmlFor='email'>email</label>
+              <label htmlFor='email'>Email</label>
               <input
                 className='mt-2 px-3 py-2 border outline-none rounded'
                 type='email'

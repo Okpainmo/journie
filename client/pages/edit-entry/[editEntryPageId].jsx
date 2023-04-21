@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import useSWR from 'swr';
 import AppWrapper from '../../components/layout/AppWrapper';
 import AppBody from '@/components/layout/AppBody';
@@ -109,9 +110,18 @@ function EditEntryPage() {
 
   if (error) {
     return (
-      <div className='mt-[300px] text-center text-purple-800 text-[16px]'>
-        failed to load: an error was encountered!!!
-      </div>
+      <main className='flex flex-col item-center'>
+        <div className='mt-[300px] mb-4 text-center text-purple-800 text-[16px]'>
+          failed to load: an error was encountered!!!
+        </div>
+        <Link
+          type='button'
+          href='/'
+          className='submit text-center bg-green-500 py-3 text-[12px] sm:text-[14px] text-white rounded w-[150px]'
+        >
+          return to login
+        </Link>
+      </main>
     );
   }
 

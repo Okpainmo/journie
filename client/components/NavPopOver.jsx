@@ -11,7 +11,7 @@ function NavPopOver() {
 
   const features = [
     {
-      name: 'My todos/Schedules',
+      name: 'My todos/schedules',
       description: 'All your todos/schedules in one place.',
       href: '##',
       icon: IconOne,
@@ -66,7 +66,7 @@ function NavPopOver() {
   // }
 
   return (
-    <Popover className='relative rounded'>
+    <Popover className='relative'>
       <Popover.Button className='focus:outline-[0]'>
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -74,7 +74,7 @@ function NavPopOver() {
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='w-6 sm:w-8 sm:h-8 h-6'
+          className='w-8 sm:w-10 sm:h-10 h-8 translate-y-[2px]'
         >
           <path
             strokeLinecap='round'
@@ -84,7 +84,7 @@ function NavPopOver() {
         </svg>
       </Popover.Button>
 
-      <Popover.Panel className='absolute z-20 min-w-[290px] min-h-[200px] rounded px-4 py-4 right-0 top-12 shadow flex flex-col justify-between bg-gray-100'>
+      <Popover.Panel className='absolute z-20 sm:min-w-[350px] min-w-[290px] h-[600px] sm:h-[800px] overflow-y-auto rounded px-4 py-8 right-0 top-8 shadow flex flex-col justify-between bg-gray-100'>
         <div className='flex gap-4 items-center'>
           <Image
             src={mockDP}
@@ -112,7 +112,7 @@ function NavPopOver() {
                     <p className='text-sm font-medium text-gray-900'>
                       {item.name}
                     </p>
-                    <p className='text-sm text-gray-500'>
+                    <p className=' text-gray-500 text-[12px]'>
                       {item.description} -{' '}
                       <span className='text-purple-500 text-[10px]'>
                         coming soon
@@ -122,7 +122,7 @@ function NavPopOver() {
                 </Link>
               ))}
             </div>
-            <div className='flex flex-col gap-2 mt-6 overflow-y-auto h-[150px]'>
+            <div className='flex flex-col gap-2 mt-6 overflow-y-auto h-[200px]'>
               <h4 className='text-md poppins font-bold'>Features update</h4>
               <div className='text-gray-400'>
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iusto
