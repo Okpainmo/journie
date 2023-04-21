@@ -202,7 +202,6 @@ app.get('/api/get-all-users', async (req, res) => {
 
 // create entry;
 app.post('/api/create-entry', authMiddleware, async (req, res) => {
-  console.log(user);
   req.body.createdBy = req.user.userId;
 
   // get all entries made by this user
@@ -245,13 +244,11 @@ app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
       });
     }
 
-    res
-      .status(200)
-      .json({
-        requestStatus: 'entry fetched successfully',
-        entryOwner: user,
-        entry: entry,
-      });
+    res.status(200).json({
+      requestStatus: 'entry fetched successfully',
+      entryOwner: user,
+      entry: entry,
+    });
   } catch (error) {
     res.status(500).json({ errorMessage: error });
   }
