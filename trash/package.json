@@ -1,5 +1,6 @@
 {
-	"dependencies": {
-		"nodemon": "^2.0.22"
-	}
+  "dependencies": {
+    "@headlessui/react": "^1.7.14",
+    "react-hot-toast": "^2.4.0"
+  }
 }
