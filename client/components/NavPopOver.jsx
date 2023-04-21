@@ -46,8 +46,10 @@ function NavPopOver() {
   const userEmail = sessionStorage.getItem('userEmail');
 
   function logOut() {
-    sessionStorage.removeItem('userToken');
-    sessionStorage.removeItem('userEmail');
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('userToken');
+      sessionStorage.removeItem('userEmail');
+    }
 
     setTimeout(() => {
       router.push('/');
