@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema(
       minLength: 6,
       // maxLength: 12,
     },
+    profileImageUrl: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

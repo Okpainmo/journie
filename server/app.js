@@ -7,8 +7,11 @@ const jwt = require('jsonwebtoken');
 //bcryptjs import
 const bcrypt = require('bcryptjs');
 
-// cors(cross origin resource sharing)
+// cors(cross origin resource sharing) import
 const cors = require('cors');
+
+// multer import
+const multer = require('multer');
 
 // express init
 const express = require('express');
@@ -23,6 +26,38 @@ const entryModel = require('./models/entry');
 
 // middlewares
 const authMiddleware = require('./middlewares/auth');
+
+// import crypto a built-in nodejs module for generating random strings
+// const crypto = require('crypto');
+// const { createHmac } = require('crypto');
+
+// aws S3
+const {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const sharp = require('sharp');
+
+// multer/file upload chores
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+// AWS related envirenment variables
+
+const awsBucketName = process.env.AWS_BUCKET_NAME;
+const awsBucketRegion = process.env.AWS_BUCKET_REGION;
+const awsAccessKey = process.env.AWS_ACCESS_KEY;
+const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+const S3 = new S3Client({
+  region: awsBucketRegion,
+  credentials: {
+    accessKeyId: awsAccessKey,
+    secretAccessKey: awsSecretAccessKey,
+  },
+});
 
 // express middleware for handling json data in post-requests
 app.use(express.json());
@@ -199,6 +234,78 @@ app.get('/api/get-all-users', async (req, res) => {
     console.log(error);
   }
 });
+
+// handle profile image upload and display
+
+app.post(
+  '/api/profile-image-upload',
+  authMiddleware,
+  upload.single('profileImage'),
+  async (req, res) => {
+    const file = req.file;
+    console.log(file);
+
+    console.log(req.user);
+
+    // adding an image to s3
+
+    const resizedImage = await sharp(file.buffer)
+      .resize({ height: 1080, width: 1080, fit: 'contain' })
+      .toBuffer();
+
+    const params = {
+      Bucket: awsBucketName,
+      Key: file.originalname,
+      Body: resizedImage,
+      ContentType: file.mimetype,
+    };
+
+    const command = new PutObjectCommand(params);
+
+    await S3.send(command);
+
+    // getting an image from s3
+
+    const getSignedImageUrl = () => {
+      const params = {
+        Bucket: awsBucketName,
+        Key: file.originalname,
+      };
+
+      const command = new GetObjectCommand(params);
+      const seconds = 60 * 60 * 24; // 1 day
+
+      const url = getSignedUrl(S3, command, { expiresIn: seconds });
+      return url;
+    };
+
+    const imageUrl = await getSignedImageUrl();
+
+    // update db with user profile image
+    try {
+      const user = await userModel.find({ _id: req.user.userId });
+
+      const updatedUser = await userModel.findOneAndUpdate(
+        { _id: req.user.userId },
+        { ...user, profileImageUrl: imageUrl },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      res.status(200).json({
+        requestStatus: 'profile image uploaded successfully',
+        updatedUser: updatedUser,
+      });
+    } catch (error) {
+      res.status(500).json({
+        requestStatus: 'profile image upload failed',
+        errorMessage: error,
+      });
+    }
+  }
+);
 
 // create entry;
 app.post('/api/create-entry', authMiddleware, async (req, res) => {
