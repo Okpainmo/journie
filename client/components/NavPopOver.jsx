@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 // import Link from 'next/link';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Popover } from '@headlessui/react';
 import mockDP from '../assets/images/sample.jpg';
+import { GlobalContext } from '../context/GlobalContext';
 
 function NavPopOver() {
-  // const [user, setUser] = useState({ name: '', email: '' });
+  const { toggleAddBtn } = useContext(GlobalContext);
 
   const features = [
     {
@@ -46,28 +47,24 @@ function NavPopOver() {
 
   const userName = sessionStorage.getItem('userName');
   const userEmail = sessionStorage.getItem('userEmail');
+  const profileImageUrl = sessionStorage.getItem('userProfileImageUrl');
 
   function logOut() {
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('userToken');
-      sessionStorage.removeItem('userEmail');
-    }
+    // if (typeof window !== 'undefined') {
+    sessionStorage.removeItem('userToken');
+    sessionStorage.removeItem('userEmail');
+    sessionStorage.removeItem('userProfileImageUrl');
+    sessionStorage.removeItem('userName');
+    // }
 
     setTimeout(() => {
       router.push('/');
     }, 1000);
   }
 
-  // if (typeof window !== 'undefined') {
-
-  //   if (userName && userEmail) {
-  //     setUser({ name: userName, email: userEmail });
-  //   }
-  // }
-
   return (
     <Popover className='relative'>
-      <Popover.Button className='focus:outline-[0]'>
+      <Popover.Button className='focus:outline-[0]' onClick={toggleAddBtn}>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'
@@ -84,11 +81,14 @@ function NavPopOver() {
         </svg>
       </Popover.Button>
 
-      <Popover.Panel className='absolute z-20 sm:min-w-[350px] min-w-[290px] h-[600px] sm:h-[800px] overflow-y-auto rounded px-4 py-8 right-0 top-8 shadow flex flex-col justify-between bg-gray-100'>
+      <Popover.Panel className='absolute z-20 w-[290px] xsm:w-[330px] sm:w-[450px] h-[600px] sm:h-[800px] overflow-y-auto rounded px-4 py-8 right-0 top-8 shadow flex flex-col justify-between bg-gray-100'>
         <div className='flex gap-4 items-center'>
           <Image
-            src={mockDP}
+            src={profileImageUrl ? profileImageUrl : mockDP}
+            // placeholder='blur'
             alt='user-profile-photo'
+            width={50}
+            height={50}
             className='rounded-full w-[50px] h-[50px]'
           />
           <div className='py-3'>
@@ -96,14 +96,24 @@ function NavPopOver() {
             <div className='text-gray-400 flex flex-row mt-1'>{userEmail}</div>
           </div>
         </div>
-        <section className='mt-10'>
+        {!profileImageUrl && (
+          <section className='text-purple-800 mt-4 flex flex-row-reverse gap-2 items-center'>
+            <Link href='/add-profile-image'>
+              <button className='bg-purple-100 text-purple-900 font-bold rounded border-0 cursor-pointer px-3 py-2 text-[12px] min-w-[80px]'>
+                upload profile photo
+              </button>
+            </Link>
+            <span>new feature - </span>
+          </section>
+        )}
+        <section className='mt-6'>
           <div className='flex flex-col gap-6'>
             <div className='relative flex flex-col lg:grid-cols-2 border-t border-b'>
               {features.map((item) => (
                 <Link
                   key={item.name}
                   href='/profile'
-                  className='-m-3 flex items-center rounded-lg px-3 my-3 transition duration-150 ease-in-out focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50'
+                  className='flex items-center rounded-lg my-6 transition duration-150 ease-in-out focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50'
                 >
                   <div className='flex h-10 w-10 shrink-0 items-center justify-center text-white sm:h-12 sm:w-12'>
                     <item.icon aria-hidden='true' />
@@ -122,7 +132,7 @@ function NavPopOver() {
                 </Link>
               ))}
             </div>
-            <div className='flex flex-col gap-2 mt-6 overflow-y-auto h-[200px]'>
+            <div className='flex flex-col gap-2 mt-2 overflow-y-auto h-[200px]'>
               <h4 className='text-md poppins font-bold'>Features update</h4>
               <div className='text-gray-400'>
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iusto
@@ -141,7 +151,7 @@ function NavPopOver() {
             </div>
           </div>
         </section>
-        <section className='mt-6'>
+        <section className='mt-10'>
           <div className='flex flex-row-reverse gap-4'>
             <button
               onClick={logOut}

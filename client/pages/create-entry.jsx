@@ -115,7 +115,7 @@ function CreateEntryPage() {
               <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
                 <label htmlFor='entry-body'>Entry body</label>
                 <p className='text-purple-800 text-[10px] mt-2 underline'>
-                  create amazing journals with the help of Journie&rsquo;s
+                  Create amazing journals with the help of Journie&rsquo;s
                   special syntax. Simply split your memories, tasks, or notes
                   into well structured entries by adding a single asterick
                   between each paragraph.
@@ -124,7 +124,7 @@ function CreateEntryPage() {
                   className='mt-2 px-3 py-2 border outline-none rounded'
                   type='text'
                   cols={20}
-                  rows={10}
+                  rows={30}
                   required
                   placeholder='enter your thought here'
                   value={createEntryForm.entryBody}

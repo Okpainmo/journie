@@ -57,17 +57,20 @@ function LoginPage() {
       sessionStorage.setItem('userName', `${userName}`);
     } catch (error) {
       console.log(error);
-      toast.error('login failed... please try again with correct credentials', {
-        id: toastId,
-        duration: 4000,
-      });
+      toast.error(
+        'login failed... please try again with correct credentials or check you network',
+        {
+          id: toastId,
+          duration: 4000,
+        }
+      );
     }
   };
 
   return (
     <>
       <Toaster />
-      <main className='login-page pt-12 pb-16 my-20 sm:my-40 mx-3 px-3 rounded border sm:w-[400px] sm:mx-auto'>
+      <main className='login-page pt-12 pb-16 my-20 sm:my-32 mx-3 px-3 rounded border sm:w-[400px] sm:mx-auto'>
         <div className='flex flex-col sm:px-3 gap-8'>
           {/* <Link href='/'> */}
           <div className='logo-wrapper poppins font-bold text-purple-800 text-xl sm:text-3xl text-center'>

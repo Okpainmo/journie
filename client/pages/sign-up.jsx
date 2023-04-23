@@ -7,6 +7,8 @@ import { Toaster, toast } from 'react-hot-toast';
 function SignUpPage() {
   const router = useRouter();
 
+  // handling file upload
+
   const [signUpForm, setSignUpForm] = useState({
     fullName: '',
     email: '',
@@ -16,8 +18,6 @@ function SignUpPage() {
 
   async function createUser(e) {
     e.preventDefault();
-
-    console.log(signUpForm);
 
     if (
       signUpForm.fullName === '' ||
@@ -44,11 +44,14 @@ function SignUpPage() {
       return;
     }
 
+    console.log(signUpForm);
+
     const toastId = toast.loading('creating account...');
 
     try {
       const newUser = await axios.post(
-        'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
+        // 'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
+        'http://localhost:5000/api/sign-up', // this is the endpoint for creating a new user
         signUpForm
       );
 
@@ -79,9 +82,13 @@ function SignUpPage() {
         confirmPassword: '',
       });
 
+      const userName = newUser.data.user.fullName;
+      // console.log(userName);
+      sessionStorage.setItem('userName', `${userName}`);
+
       setTimeout(() => {
-        router.push('/profile');
-      }, 1000);
+        router.push('/add-profile-image');
+      }, 2000);
     } catch (error) {
       toast.error('error creating user', { id: toastId, duration: 3000 });
       console.log(error);
@@ -91,7 +98,7 @@ function SignUpPage() {
   return (
     <>
       <Toaster />
-      <main className='login-page mx-3 px-3 pt-12 pb-16 my-20 sm:my-40 rounded border sm:w-[400px] sm:mx-auto'>
+      <main className='login-page mx-3 px-3 pt-12 pb-16 my-20 sm:my-32 rounded border sm:w-[400px] sm:mx-auto'>
         <div className='flex sm:px-3 flex-col gap-8'>
           {/* <Link href='/'> */}
           <div className='logo-wrapper poppins font-bold text-purple-800 text-xl sm:text-3xl text-center'>
@@ -102,9 +109,9 @@ function SignUpPage() {
             <br />
             <span className='font-bold'>~ Oscar Wilde</span>
           </p>
-          {/* </Link> */}
+
           <form>
-            <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+            <div className='full-name input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
               <label htmlFor='full-name'>Full name</label>
               <input
                 className='mt-2 px-3 py-2 border outline-none rounded'
@@ -121,7 +128,7 @@ function SignUpPage() {
                 id='fullName'
               />
             </div>
-            <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+            <div className='email input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
               <label htmlFor='email'>Email</label>
               <input
                 className='mt-2 px-3 py-2 border outline-none rounded'
@@ -181,7 +188,7 @@ function SignUpPage() {
             </button>
             <p className='text-center text-[12px] sm:text-[14px] mt-4'>
               Have an account?{' '}
-              <Link href='/log-in' className='underline text-purple-800 '>
+              <Link href='/' className='underline text-purple-800 '>
                 log-in instead
               </Link>{' '}
             </p>

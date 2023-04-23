@@ -10,7 +10,7 @@ const StaticPopOver = dynamic(() => import('../NavPopOver'), {
 
 function Navbar() {
   return (
-    <nav className='flex justify-between items-center px-3 py-2 sm:py-4 fixed top-0 left-0 right-0 shadow bg-white sm:px-20 md:px-5 lg:px-[10%] xl:px-[10%]'>
+    <nav className='flex justify-between items-center px-3 py-2 fixed top-0 left-0 right-0 shadow bg-white sm:px-20 md:px-5 lg:px-[10%] xl:px-[10%]'>
       <Link href='/profile'>
         <div className='nav-left logo-wrapper poppins font-bold text-purple-800 text-xl sm:text-3xl'>
           Journie
