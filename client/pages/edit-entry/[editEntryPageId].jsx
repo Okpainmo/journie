@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import useSWR from 'swr';
@@ -130,96 +131,101 @@ function EditEntryPage() {
   }
 
   return (
-    <AppWrapper>
-      <AppBody>
-        <main className='bg-white login-page sm:px-3 pt-10 pb-20 rounded sm:border mt-20 sm:mt-40 md:w-[600px] md:mx-auto'>
-          <div className='flex flex-col sm:px-3 gap-8'>
-            {/* <Link href='/'> */}
-            <div className='logo-wrapper text-center'>
-              <span className='poppins font-bold text-purple-800 text-xl sm:text-3xl'>
-                Edit an entry
-              </span>
-              <p className='mt-2 text-[14px] w-full sm:w-[80%] mx-auto leading-7'>
-                “The key is not to prioritize what’s on your schedule, but to
-                schedule your priorities.”
-                <br />
-                <span className='font-bold'>~ Stephen Covey</span>
-              </p>
-            </div>
-            {/* </Link> */}
-            <form>
-              <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-                <label htmlFor='entry-title'>Entry title</label>
-                <input
-                  className='mt-2 px-3 py-2 border outline-none rounded'
-                  type='text'
-                  required
-                  placeholder='entry title'
-                  value={editEntryForm.entryTitle}
-                  onChange={(e) => {
-                    setEditEntryForm({
-                      ...editEntryForm,
-                      entryTitle: e.target.value,
-                    });
-                  }}
-                  id='entry-title'
-                />
-              </div>
-              <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-                <label htmlFor='entry-location'>Entry location</label>
-                <input
-                  className='mt-2 px-3 py-2 border outline-none rounded'
-                  type='text'
-                  required
-                  placeholder='entry location'
-                  value={editEntryForm.entryLocation}
-                  onChange={(e) => {
-                    setEditEntryForm({
-                      ...editEntryForm,
-                      entryLocation: e.target.value,
-                    });
-                  }}
-                  id='entry-location'
-                />
-              </div>
-              <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
-                <label htmlFor='entry-body'>Entry body</label>
-                <p className='text-purple-800 text-[10px] mt-2 underline'>
-                  Create amazing entries with the help of Journie&rsquo;s
-                  special syntax. Simply split your memories, todos/tasks, or
-                  notes into well structured entries by adding a single asterick
-                  between each paragraph.
+    <>
+      <Head>
+        <title>Journie - edit entry</title>
+      </Head>
+      <AppWrapper>
+        <AppBody>
+          <main className='bg-white login-page sm:px-3 pt-10 pb-20 rounded sm:border mt-20 sm:mt-40 md:w-[600px] md:mx-auto'>
+            <div className='flex flex-col sm:px-3 gap-8'>
+              {/* <Link href='/'> */}
+              <div className='logo-wrapper text-center'>
+                <span className='poppins font-bold text-purple-800 text-xl sm:text-3xl'>
+                  Edit an entry
+                </span>
+                <p className='mt-2 text-[14px] w-full sm:w-[80%] mx-auto leading-7'>
+                  “The key is not to prioritize what’s on your schedule, but to
+                  schedule your priorities.”
+                  <br />
+                  <span className='font-bold'>~ Stephen Covey</span>
                 </p>
-                <textarea
-                  className='mt-2 px-3 py-2 border outline-none rounded'
-                  type='text'
-                  cols={20}
-                  rows={30}
-                  required
-                  placeholder='enter your thought here'
-                  value={editEntryForm.entryBody}
-                  onChange={(e) => {
-                    setEditEntryForm({
-                      ...editEntryForm,
-                      entryBody: e.target.value,
-                    });
-                  }}
-                  id='entry-body'
-                ></textarea>
               </div>
-              <button
-                type='button'
-                onClick={editEntry}
-                className='submit text-center bg-green-500 py-3 text-[12px] sm:text-[14px] text-white rounded w-full'
-              >
-                Edit Entry
-              </button>
-            </form>
-          </div>
-        </main>
-        {/* <FloatingButton /> */}
-      </AppBody>
-    </AppWrapper>
+              {/* </Link> */}
+              <form>
+                <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+                  <label htmlFor='entry-title'>Entry title</label>
+                  <input
+                    className='mt-2 px-3 py-2 border outline-none rounded'
+                    type='text'
+                    required
+                    placeholder='entry title'
+                    value={editEntryForm.entryTitle}
+                    onChange={(e) => {
+                      setEditEntryForm({
+                        ...editEntryForm,
+                        entryTitle: e.target.value,
+                      });
+                    }}
+                    id='entry-title'
+                  />
+                </div>
+                <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+                  <label htmlFor='entry-location'>Entry location</label>
+                  <input
+                    className='mt-2 px-3 py-2 border outline-none rounded'
+                    type='text'
+                    required
+                    placeholder='entry location'
+                    value={editEntryForm.entryLocation}
+                    onChange={(e) => {
+                      setEditEntryForm({
+                        ...editEntryForm,
+                        entryLocation: e.target.value,
+                      });
+                    }}
+                    id='entry-location'
+                  />
+                </div>
+                <div className='input-group flex flex-col mb-6 text-[12px] sm:text-[14px]'>
+                  <label htmlFor='entry-body'>Entry body</label>
+                  <p className='text-purple-800 text-[10px] mt-2 underline'>
+                    Create amazing entries with the help of Journie&rsquo;s
+                    special syntax. Simply split your memories, todos/tasks, or
+                    notes into well structured entries by adding a single
+                    asterick between each paragraph.
+                  </p>
+                  <textarea
+                    className='mt-2 px-3 py-2 border outline-none rounded'
+                    type='text'
+                    cols={20}
+                    rows={30}
+                    required
+                    placeholder='enter your thought here'
+                    value={editEntryForm.entryBody}
+                    onChange={(e) => {
+                      setEditEntryForm({
+                        ...editEntryForm,
+                        entryBody: e.target.value,
+                      });
+                    }}
+                    id='entry-body'
+                  ></textarea>
+                </div>
+                <button
+                  type='button'
+                  onClick={editEntry}
+                  className='submit text-center bg-green-500 py-3 text-[12px] sm:text-[14px] text-white rounded w-full'
+                >
+                  Edit Entry
+                </button>
+              </form>
+            </div>
+          </main>
+          {/* <FloatingButton /> */}
+        </AppBody>
+      </AppWrapper>
+    </>
   );
 }
 

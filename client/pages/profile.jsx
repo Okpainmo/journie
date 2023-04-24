@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import Image from 'next/image';
 // import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -120,62 +121,67 @@ function ProfilePage() {
   }
 
   return (
-    <AppWrapper>
-      <AppBody>
-        <MyModal
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          closeModal={closeModal}
-          openModal={openModal}
-          deleteEntry={deleteEntry}
-          entryId={entryId}
-        />
-        <section className='page-intro'>
-          <h2 className='text-2xl sm:text-3xl sm:mb-8 poppins mb-4 font-bold'>
-            Hi {userFirstName}{' '}
-            <div className='text-4xl inline-block'>
-              <Emoji label='wave' symbol='👋' />
-            </div>
-          </h2>
-
-          <Image
-            src={banner}
-            alt='journie banner'
-            className='w-full lg:h-[300px] bg-contain'
-            placeholder='blur'
+    <>
+      <Head>
+        <title>Journie - me</title>
+      </Head>
+      <AppWrapper>
+        <AppBody>
+          <MyModal
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            closeModal={closeModal}
+            openModal={openModal}
+            deleteEntry={deleteEntry}
+            entryId={entryId}
           />
-          <div className='intro-text text-center mt-2 sm:mt-4 mb-4 sm:mb-8'>
-            <div className='py-4 sm:text-[14px]'>
-              &lsquo;All successful people men and women are big dreamers. They
-              imagine what their future could be, ideal in every respect, and
-              then they work every day toward their distant vision, that goal or
-              purpose.&rsquo;
+          <section className='page-intro'>
+            <h2 className='text-2xl sm:text-3xl sm:mb-8 poppins mb-4 font-bold'>
+              Hi {userFirstName}{' '}
+              <div className='text-4xl inline-block'>
+                <Emoji label='wave' symbol='👋' />
+              </div>
+            </h2>
+
+            <Image
+              src={banner}
+              alt='journie banner'
+              className='w-full lg:h-[300px] bg-contain'
+              placeholder='blur'
+            />
+            <div className='intro-text text-center mt-2 sm:mt-4 mb-4 sm:mb-8'>
+              <div className='py-4 sm:text-[14px]'>
+                &lsquo;All successful people men and women are big dreamers.
+                They imagine what their future could be, ideal in every respect,
+                and then they work every day toward their distant vision, that
+                goal or purpose.&rsquo;
+              </div>
+              <span>
+                <span className='font-bold'>- Brian Tracy</span>
+              </span>
             </div>
-            <span>
-              <span className='font-bold'>- Brian Tracy</span>
-            </span>
-          </div>
-        </section>
-        <section className='jobs py-3 flex flex-wrap md:gap-x-[2%] xl:gap-x-[5%]'>
-          {data.entries.length < 1 ? (
-            <div className='mt-10 text-center text-purple-800 text-[14px] w-[75%] sm:w-[500px] mx-auto'>
-              Opps!!! your journal is empty... your entries will show up here
-              when you create them.
-            </div>
-          ) : (
-            data.entries.map((entry) => (
-              <EntryCard
-                key={entry._id}
-                entry={entry}
-                openModal={openModal}
-                updateEntryId={updateEntryId}
-              />
-            ))
-          )}
-        </section>
-        <FloatingButton />
-      </AppBody>
-    </AppWrapper>
+          </section>
+          <section className='jobs py-3 flex flex-wrap md:gap-x-[2%] xl:gap-x-[5%]'>
+            {data.entries.length < 1 ? (
+              <div className='mt-10 text-center text-purple-800 text-[14px] w-[75%] sm:w-[500px] mx-auto'>
+                Opps!!! your journal is empty... your entries will show up here
+                when you create them.
+              </div>
+            ) : (
+              data.entries.map((entry) => (
+                <EntryCard
+                  key={entry._id}
+                  entry={entry}
+                  openModal={openModal}
+                  updateEntryId={updateEntryId}
+                />
+              ))
+            )}
+          </section>
+          <FloatingButton />
+        </AppBody>
+      </AppWrapper>
+    </>
   );
 }
 // }

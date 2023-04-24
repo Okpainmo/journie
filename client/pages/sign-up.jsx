@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -98,6 +99,9 @@ function SignUpPage() {
   return (
     <>
       <Toaster />
+      <Head>
+        <title>Journie - sign up</title>
+      </Head>
       <main className='login-page mx-3 px-3 pt-12 pb-16 my-20 sm:my-32 rounded border sm:w-[400px] sm:mx-auto'>
         <div className='flex sm:px-3 flex-col gap-8'>
           {/* <Link href='/'> */}
