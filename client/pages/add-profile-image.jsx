@@ -74,16 +74,6 @@ function SignUpPage() {
     }
   }
 
-  const username = sessionStorage.getItem('userName');
-  const userEmail = sessionStorage.getItem('userEmail');
-  const userToken = sessionStorage.getItem('userToken');
-  // const userProfileImageUrl = sessionStorage.getItem('userProfileImageUrl');
-
-  if (!userToken || !userEmail || !username) {
-    router.push('/');
-    return;
-  }
-
   return (
     <>
       <Toaster />
