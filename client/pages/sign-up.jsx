@@ -51,7 +51,7 @@ function SignUpPage() {
     try {
       const newUser = await axios.post(
         // 'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
-        'http://localhost:5000/api/sign-up', // this is the endpoint for creating a new user
+        'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
         signUpForm
       );
 

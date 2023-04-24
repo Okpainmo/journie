@@ -42,7 +42,7 @@ function SignUpPage() {
 
     try {
       const updatedUserData = await axios.post(
-        'http://localhost:5000/api/profile-image-upload',
+        'https://journie-journalling-note-taking-app.onrender.com/api/profile-image-upload',
         formData,
         {
           headers: {
