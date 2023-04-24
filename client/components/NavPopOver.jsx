@@ -53,8 +53,8 @@ function NavPopOver() {
     // if (typeof window !== 'undefined') {
     sessionStorage.removeItem('userToken');
     sessionStorage.removeItem('userEmail');
-    sessionStorage.removeItem('userProfileImageUrl');
-    sessionStorage.removeItem('userName');
+    // sessionStorage.removeItem('userName');
+    // sessionStorage.removeItem('userProfileImageUrl');
     // }
 
     setTimeout(() => {
