@@ -107,19 +107,6 @@ function NavPopOver() {
           </section>
         )}
         <section className='mt-6'>
-          <div className='flex flex-row-reverse gap-4'>
-            <button
-              onClick={() => {
-                toggleAddBtn();
-                logOut();
-              }}
-              className='bg-green-500 rounded text-white px-3 py-2 text-[12px] min-w-[80px]'
-            >
-              log out
-            </button>
-          </div>
-        </section>
-        <section className='mt-6'>
           <div className='flex flex-col gap-6'>
             <div className='relative flex flex-col lg:grid-cols-2 border-t border-b'>
               {features.map((item) => (
@@ -172,7 +159,17 @@ function NavPopOver() {
                   notifications to emails of people added as task/todo
                   assignees. <br /> 7. An in-app email service that helps you
                   send emails right from within the app. <br /> 8. Theme
-                  toggling between light and dark modes. With maybe even more.
+                  toggling between light and dark modes. <br /> <br /> With
+                  maybe even more...
+                </p>
+                <p className='mt-4'>
+                  Send all feedbacks and/or collaboration requests to:{' '}
+                  <a
+                    className='text-purple-800'
+                    href='mailto:okpainmoandrew@gmail.com'
+                  >
+                    okpainmoandrew@gmail.com
+                  </a>
                 </p>
                 <p className='mt-4'>
                   Thanks for joining the wait-list. <br /> Cheers!!!{' '}
@@ -180,6 +177,19 @@ function NavPopOver() {
               </div>
             </div>
           </div>
+          <section className='mt-10'>
+            <div className='flex flex-row-reverse gap-4'>
+              <button
+                onClick={() => {
+                  toggleAddBtn();
+                  logOut();
+                }}
+                className='bg-green-500 rounded text-white px-3 py-2 text-[12px] min-w-[80px]'
+              >
+                log out
+              </button>
+            </div>
+          </section>
         </section>
       </Popover.Panel>
     </Popover>
