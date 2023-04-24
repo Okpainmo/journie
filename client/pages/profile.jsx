@@ -13,8 +13,11 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import banner from '@/assets/images/journie-banner.jpg';
 import Emoji from '@/components/Emoji';
+import { useRouter } from 'next/router';
 
 function ProfilePage() {
+  const router = useRouter();
+
   const fetcher = (url) =>
     fetch(url, {
       headers: {
@@ -105,6 +108,17 @@ function ProfilePage() {
   }
 
   const userFirstName = sessionStorage.getItem('userName').split(' ')[0];
+
+  const username = sessionStorage.getItem('userName');
+  const userEmail = sessionStorage.getItem('userEmail');
+  const userToken = sessionStorage.getItem('userToken');
+  const userProfileImageUrl = sessionStorage.getItem('userProfileImageUrl');
+
+  if (!userToken || !userEmail || !username || !userProfileImageUrl) {
+    router.push('/');
+    return;
+  }
+
   return (
     <AppWrapper>
       <AppBody>

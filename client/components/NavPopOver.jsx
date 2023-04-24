@@ -36,8 +36,8 @@ function NavPopOver() {
     //   icon: IconTwo,
     // },
     {
-      name: 'You stats',
-      description: 'Your Journie usage statistics.',
+      name: 'My stats',
+      description: 'Your relevant Journie usage statistics.',
       href: '##',
       icon: IconThree,
     },
@@ -81,7 +81,7 @@ function NavPopOver() {
         </svg>
       </Popover.Button>
 
-      <Popover.Panel className='absolute z-20 w-[290px] xsm:w-[330px] sm:w-[450px] h-[600px] sm:h-[800px] overflow-y-auto rounded px-4 py-8 right-0 top-8 shadow flex flex-col justify-between bg-gray-100'>
+      <Popover.Panel className='absolute z-20 w-[290px] xsm:w-[330px] sm:w-[450px] h-[600px] sm:h-[800px] overflow-y-auto rounded px-4 pt-8 pb-12 right-0 top-8 shadow flex flex-col justify-between bg-gray-100'>
         <div className='flex gap-4 items-center'>
           <Image
             src={profileImageUrl ? profileImageUrl : mockDP}
@@ -106,6 +106,19 @@ function NavPopOver() {
             <span>new feature - </span>
           </section>
         )}
+        <section className='mt-6'>
+          <div className='flex flex-row-reverse gap-4'>
+            <button
+              onClick={() => {
+                toggleAddBtn();
+                logOut();
+              }}
+              className='bg-green-500 rounded text-white px-3 py-2 text-[12px] min-w-[80px]'
+            >
+              log out
+            </button>
+          </div>
+        </section>
         <section className='mt-6'>
           <div className='flex flex-col gap-6'>
             <div className='relative flex flex-col lg:grid-cols-2 border-t border-b'>
@@ -166,19 +179,6 @@ function NavPopOver() {
                 </p>
               </div>
             </div>
-          </div>
-        </section>
-        <section className='mt-10'>
-          <div className='flex flex-row-reverse gap-4'>
-            <button
-              onClick={() => {
-                toggleAddBtn();
-                logOut();
-              }}
-              className='bg-green-500 rounded text-white px-3 py-2 text-[12px] min-w-[80px]'
-            >
-              log out
-            </button>
           </div>
         </section>
       </Popover.Panel>

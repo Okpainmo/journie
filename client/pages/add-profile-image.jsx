@@ -64,14 +64,24 @@ function SignUpPage() {
       setSelectedImageFile(null);
       setIsFilePicked(false);
       // setShowFileUpload(false);
+
+      setTimeout(() => {
+        router.push('/profile');
+      }, 2000);
     } catch (error) {
       toast.error('error uploading file', { id: toastId, duration: 3000 });
       console.log(error);
     }
+  }
 
-    setTimeout(() => {
-      router.push('/profile');
-    }, 2000);
+  const username = sessionStorage.getItem('userName');
+  const userEmail = sessionStorage.getItem('userEmail');
+  const userToken = sessionStorage.getItem('userToken');
+  // const userProfileImageUrl = sessionStorage.getItem('userProfileImageUrl');
+
+  if (!userToken || !userEmail || !username) {
+    router.push('/');
+    return;
   }
 
   return (
