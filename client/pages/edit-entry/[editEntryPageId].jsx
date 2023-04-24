@@ -140,10 +140,10 @@ function EditEntryPage() {
                 Edit an entry
               </span>
               <p className='mt-2 text-[14px] w-full sm:w-[80%] mx-auto leading-7'>
-                “Memory is the treasure house of the mind wherein the monuments
-                thereof are kept and preserved.”
+                “The key is not to prioritize what’s on your schedule, but to
+                schedule your priorities.”
                 <br />
-                <span className='font-bold'>~ Thomas Fuller</span>
+                <span className='font-bold'>~ Stephen Covey</span>
               </p>
             </div>
             {/* </Link> */}
@@ -186,8 +186,8 @@ function EditEntryPage() {
                 <label htmlFor='entry-body'>Entry body</label>
                 <p className='text-purple-800 text-[10px] mt-2 underline'>
                   Create amazing entries with the help of Journie&rsquo;s
-                  special syntax. Simply split your memories, tasks, or notes
-                  into well structured entries by adding a single asterick
+                  special syntax. Simply split your memories, todos/tasks, or
+                  notes into well structured entries by adding a single asterick
                   between each paragraph.
                 </p>
                 <textarea

@@ -71,9 +71,9 @@ function CreateEntryPage() {
                 Create an entry
               </span>
               <p className='mt-2 text-[14px] w-full sm:w-[80%] mx-auto leading-7'>
-                “Memories are the key not to the past, but to the future.”
+                “Until we can manage time, we can manage nothing else.”
                 <br />
-                <span className='font-bold'>~ Corrie ten Boom</span>
+                <span className='font-bold'>~ Peter Drucker</span>
               </p>
             </div>
             {/* </Link> */}
@@ -116,8 +116,8 @@ function CreateEntryPage() {
                 <label htmlFor='entry-body'>Entry body</label>
                 <p className='text-purple-800 text-[10px] mt-2 underline'>
                   Create amazing journals with the help of Journie&rsquo;s
-                  special syntax. Simply split your memories, tasks, or notes
-                  into well structured entries by adding a single asterick
+                  special syntax. Simply split your memories, todos/tasks, or
+                  notes into well structured entries by adding a single asterick
                   between each paragraph.
                 </p>
                 <textarea

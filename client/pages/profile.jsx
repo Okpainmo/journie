@@ -130,14 +130,16 @@ function ProfilePage() {
             className='w-full lg:h-[300px] bg-contain'
             placeholder='blur'
           />
-          <div className='intro-text lg:w-[80%]'>
+          <div className='intro-text text-center mt-2 sm:mt-4 mb-4 sm:mb-8'>
             <div className='py-4 sm:text-[14px]'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam,
-              quam recusandae consequatur nulla quis in repudiandae quo quidem
-              nihil aspernatur, alias, vitae similique? Neque iure officia sint
-              necessitatibus ipsam accusamus veniam praesentium ex qui facere
-              nisi, ipsum nostrum pariatur.
+              &lsquo;All successful people men and women are big dreamers. They
+              imagine what their future could be, ideal in every respect, and
+              then they work every day toward their distant vision, that goal or
+              purpose.&rsquo;
             </div>
+            <span>
+              <span className='font-bold'>- Brian Tracy</span>
+            </span>
           </div>
         </section>
         <section className='jobs py-3 flex flex-wrap md:gap-x-[2%] xl:gap-x-[5%]'>

@@ -7,10 +7,13 @@ function Footer() {
         Journie
       </div>
       <div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni voluptas
-        alias commodi magnam quidem pariatur iure et adipisci in perferendis.
+        Helping you to be more productive and happy, one day at a time -{' '}
+        <span className='font-bold'>
+          Notes, todos/schedules, and journalling
+        </span>{' '}
+        all in one place.
       </div>
-      <div className='my-3'>&copy; 2021 Journie. All rights reserved.</div>
+      <div className='my-3'>&copy; 2023 Journie. All rights reserved.</div>
     </footer>
   );
 }

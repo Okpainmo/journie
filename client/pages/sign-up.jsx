@@ -67,6 +67,13 @@ function SignUpPage() {
         });
       }
 
+      setSignUpForm({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      });
+
       sessionStorage.setItem('userToken', `${newUser.data.token}`);
       sessionStorage.setItem('userEmail', `${newUser.data.user.email}`);
 
@@ -74,13 +81,6 @@ function SignUpPage() {
       const userEmail = sessionStorage.getItem('userEmail');
 
       console.log(userToken, userEmail);
-
-      setSignUpForm({
-        fullName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      });
 
       const userName = newUser.data.user.fullName;
       // console.log(userName);
@@ -105,9 +105,10 @@ function SignUpPage() {
             Journie/sign up
           </div>
           <p className='mt-2 text-[14px] w-full mx-auto leading-7 text-center'>
-            “Memory is the diary we all carry about with us.”
+            “The tragedy in life doesn’t lie in not reaching your goal. The
+            tragedy lies in having no goal to reach.”
             <br />
-            <span className='font-bold'>~ Oscar Wilde</span>
+            <span className='font-bold'>~ Benjamin E. Mays</span>
           </p>
 
           <form>

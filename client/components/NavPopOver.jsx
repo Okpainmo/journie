@@ -98,7 +98,7 @@ function NavPopOver() {
         </div>
         {!profileImageUrl && (
           <section className='text-purple-800 mt-4 flex flex-row-reverse gap-2 items-center'>
-            <Link href='/add-profile-image'>
+            <Link href='/add-profile-image' onClick={toggleAddBtn}>
               <button className='bg-purple-100 text-purple-900 font-bold rounded border-0 cursor-pointer px-3 py-2 text-[12px] min-w-[80px]'>
                 upload profile photo
               </button>
@@ -132,21 +132,38 @@ function NavPopOver() {
                 </Link>
               ))}
             </div>
-            <div className='flex flex-col gap-2 mt-2 overflow-y-auto h-[200px]'>
+            <div className='flex flex-col gap-2 mt-2 overflow-y-auto h-[210px]'>
               <h4 className='text-md poppins font-bold'>Features update</h4>
               <div className='text-gray-400'>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iusto
-                natus ullam tempora architecto ducimus laboriosam, veniam quod
-                provident libero, expedita, temporibus illum esse saepe facilis
-                beatae quis. Nostrum repudiandae fuga aliquam, unde autem quis
-                tempore vitae harum, laborum atque aspernatur odio ipsa, eos
-                reprehenderit eaque earum. Unde vel animi voluptatibus provident
-                excepturi labore aperiam optio tempora soluta, eius voluptatum
-                veniam cumque velit, incidunt omnis. Culpa, numquam hic ipsa sit
-                esse quia sapiente nam natus laudantium vel saepe dicta pariatur
-                itaque, facilis commodi ab! Quam, incidunt quas consequuntur
-                impedit numquam distinctio pariatur beatae eligendi suscipit
-                labore fugit eius quisquam culpa consectetur?
+                <p>
+                  A simple journalling app (Journie) that I built to help me
+                  tutor an API class is evolving into a general productivity app
+                  - for managing todos/schedules, creating notes, and making
+                  journal entries.
+                </p>
+                <p>
+                  <br /> Here are some exciting features that will roll-in in
+                  subsequent releases: <br /> <br /> 1. A very feature-rich
+                  todos/schedule functionality.
+                  <br /> 2. Markdown support.
+                  <br /> 3. A Journie whatsapp chat-bot to follow-up on created
+                  todos/schedules. <br />
+                  4. Entries grouping – a feature that give users more
+                  organization by grouping the different types of
+                  entries(todos/schedules, notes, and journal entries)
+                  accordingly.
+                  <br />
+                  5. Todos grouping – the ability to add todos into groups –
+                  e.g. week plans. <br />
+                  6. Email notification feature – for sending official
+                  notifications to emails of people added as task/todo
+                  assignees. <br /> 7. An in-app email service that helps you
+                  send emails right from within the app. <br /> 8. Theme
+                  toggling between light and dark modes. With maybe even more.
+                </p>
+                <p className='mt-4'>
+                  Thanks for joining the wait-list. <br /> Cheers!!!{' '}
+                </p>
               </div>
             </div>
           </div>
@@ -154,7 +171,10 @@ function NavPopOver() {
         <section className='mt-10'>
           <div className='flex flex-row-reverse gap-4'>
             <button
-              onClick={logOut}
+              onClick={() => {
+                toggleAddBtn();
+                logOut();
+              }}
               className='bg-green-500 rounded text-white px-3 py-2 text-[12px] min-w-[80px]'
             >
               log out

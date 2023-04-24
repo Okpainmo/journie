@@ -45,16 +45,21 @@ function LoginPage() {
 
         console.log(userToken, userEmail);
 
+        console.log(loggedInUser);
+
+        const userName = loggedInUser.data.user.fullName;
+        // console.log(userName);
+        sessionStorage.setItem('userName', `${userName}`);
+
+        sessionStorage.setItem(
+          'userProfileImageUrl',
+          `${loggedInUser.data.user.profileImageUrl}`
+        );
+
         setTimeout(() => {
           router.push('/profile');
         }, 1000);
       }
-
-      console.log(loggedInUser);
-
-      const userName = loggedInUser.data.user.fullName;
-      // console.log(userName);
-      sessionStorage.setItem('userName', `${userName}`);
     } catch (error) {
       console.log(error);
       toast.error(
@@ -77,9 +82,10 @@ function LoginPage() {
             Journie/login
           </div>
           <p className='mt-2 text-[14px] w-full mx-auto leading-7 text-center'>
-            “Memory is the treasury and guardian of all things.”
+            “Productivity is being able to do things that you were never able to
+            do before.”
             <br />
-            <span className='font-bold'>~ Cicero</span>
+            <span className='font-bold'>~ Franz Kafka</span>
           </p>
           {/* </Link> */}
           <form>
