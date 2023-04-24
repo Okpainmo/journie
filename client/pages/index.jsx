@@ -38,11 +38,11 @@ function LoginPage() {
           duration: 4000,
         });
 
-        sessionStorage.setItem('userToken', `${loggedInUser.data.token}`);
-        sessionStorage.setItem('userEmail', `${loggedInUser.data.user.email}`);
+        localStorage.setItem('userToken', `${loggedInUser.data.token}`);
+        localStorage.setItem('userEmail', `${loggedInUser.data.user.email}`);
 
-        const userToken = sessionStorage.getItem('userToken');
-        const userEmail = sessionStorage.getItem('userEmail');
+        const userToken = localStorage.getItem('userToken');
+        const userEmail = localStorage.getItem('userEmail');
 
         console.log(userToken, userEmail);
 
@@ -50,9 +50,9 @@ function LoginPage() {
 
         const userName = loggedInUser.data.user.fullName;
         // console.log(userName);
-        sessionStorage.setItem('userName', `${userName}`);
+        localStorage.setItem('userName', `${userName}`);
 
-        sessionStorage.setItem(
+        localStorage.setItem(
           'userProfileImageUrl',
           `${loggedInUser.data.user.profileImageUrl}`
         );

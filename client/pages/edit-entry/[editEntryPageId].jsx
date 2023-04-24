@@ -22,8 +22,8 @@ function EditEntryPage() {
   const fetcher = (url) =>
     fetch(url, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
-        Email: `${sessionStorage.getItem('userEmail')}`,
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+        Email: `${localStorage.getItem('userEmail')}`,
       },
     }).then((res) => res.json());
 
@@ -86,8 +86,8 @@ function EditEntryPage() {
       editEntryForm,
       {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
-          Email: `${sessionStorage.getItem('userEmail')}`,
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+          Email: `${localStorage.getItem('userEmail')}`,
         },
       }
     );

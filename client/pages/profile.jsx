@@ -22,8 +22,8 @@ function ProfilePage() {
   const fetcher = (url) =>
     fetch(url, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
-        Email: `${sessionStorage.getItem('userEmail')}`,
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+        Email: `${localStorage.getItem('userEmail')}`,
       },
     }).then((res) => res.json());
 
@@ -59,8 +59,8 @@ function ProfilePage() {
       `https://journie-journalling-note-taking-app.onrender.com/api/delete-entry/${entryId}`,
       {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
-          Email: `${sessionStorage.getItem('userEmail')}`,
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+          Email: `${localStorage.getItem('userEmail')}`,
         },
       }
     );
@@ -108,12 +108,12 @@ function ProfilePage() {
     return <Preloader />;
   }
 
-  const userFirstName = sessionStorage.getItem('userName').split(' ')[0];
+  const userFirstName = localStorage.getItem('userName').split(' ')[0];
 
-  const username = sessionStorage.getItem('userName');
-  const userEmail = sessionStorage.getItem('userEmail');
-  const userToken = sessionStorage.getItem('userToken');
-  const userProfileImageUrl = sessionStorage.getItem('userProfileImageUrl');
+  const username = localStorage.getItem('userName');
+  const userEmail = localStorage.getItem('userEmail');
+  const userToken = localStorage.getItem('userToken');
+  const userProfileImageUrl = localStorage.getItem('userProfileImageUrl');
 
   if (!userToken || !userEmail || !username || !userProfileImageUrl) {
     router.push('/');

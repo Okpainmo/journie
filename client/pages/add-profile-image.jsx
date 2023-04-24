@@ -14,10 +14,10 @@ function SignUpPage() {
   async function handleFileUpload(e) {
     e.preventDefault();
 
-    const username = sessionStorage.getItem('userName');
-    const userEmail = sessionStorage.getItem('userEmail');
-    const userToken = sessionStorage.getItem('userToken');
-    // const userProfileImageUrl = sessionStorage.getItem('userProfileImageUrl');
+    const username = localStorage.getItem('userName');
+    const userEmail = localStorage.getItem('userEmail');
+    const userToken = localStorage.getItem('userToken');
+    // const userProfileImageUrl = localStorage.getItem('userProfileImageUrl');
 
     if (!userToken || !userEmail || !username) {
       router.push('/');
@@ -48,8 +48,8 @@ function SignUpPage() {
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
-            Email: `${sessionStorage.getItem('userEmail')}`,
+            Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+            Email: `${localStorage.getItem('userEmail')}`,
           },
         }
       );
@@ -67,7 +67,7 @@ function SignUpPage() {
         });
       }
 
-      sessionStorage.setItem(
+      localStorage.setItem(
         'userProfileImageUrl',
         `${updatedUserData.data.updatedUser.profileImageUrl}`
       );

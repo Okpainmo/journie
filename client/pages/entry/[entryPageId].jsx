@@ -19,8 +19,8 @@ function EntryPage() {
   const fetcher = (url) =>
     fetch(url, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
-        Email: `${sessionStorage.getItem('userEmail')}`,
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+        Email: `${localStorage.getItem('userEmail')}`,
       },
     }).then((res) => res.json());
 
@@ -143,8 +143,8 @@ export default EntryPage;
 //     'https://journie-journalling-note-taking-app.onrender.com/api/get-all-entries/',
 //     {
 //       headers: {
-//         Authorization: `Bearer ${sessionStorage.getItem('userToken')}`,
-//         Email: `${sessionStorage.getItem('userEmail')}`,
+//         Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+//         Email: `${localStorage.getItem('userEmail')}`,
 //       },
 //     }
 //   );

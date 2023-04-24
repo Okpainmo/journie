@@ -75,17 +75,17 @@ function SignUpPage() {
         confirmPassword: '',
       });
 
-      sessionStorage.setItem('userToken', `${newUser.data.token}`);
-      sessionStorage.setItem('userEmail', `${newUser.data.user.email}`);
+      localStorage.setItem('userToken', `${newUser.data.token}`);
+      localStorage.setItem('userEmail', `${newUser.data.user.email}`);
 
-      const userToken = sessionStorage.getItem('userToken');
-      const userEmail = sessionStorage.getItem('userEmail');
+      const userToken = localStorage.getItem('userToken');
+      const userEmail = localStorage.getItem('userEmail');
 
       console.log(userToken, userEmail);
 
       const userName = newUser.data.user.fullName;
       // console.log(userName);
-      sessionStorage.setItem('userName', `${userName}`);
+      localStorage.setItem('userName', `${userName}`);
 
       setTimeout(() => {
         router.push('/add-profile-image');

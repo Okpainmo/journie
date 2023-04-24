@@ -45,16 +45,16 @@ function NavPopOver() {
 
   const router = useRouter();
 
-  const userName = sessionStorage.getItem('userName');
-  const userEmail = sessionStorage.getItem('userEmail');
-  const profileImageUrl = sessionStorage.getItem('userProfileImageUrl');
+  const userName = localStorage.getItem('userName');
+  const userEmail = localStorage.getItem('userEmail');
+  const profileImageUrl = localStorage.getItem('userProfileImageUrl');
 
   function logOut() {
     // if (typeof window !== 'undefined') {
-    sessionStorage.removeItem('userToken');
-    sessionStorage.removeItem('userEmail');
-    // sessionStorage.removeItem('userName');
-    // sessionStorage.removeItem('userProfileImageUrl');
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userEmail');
+    // localStorage.removeItem('userName');
+    // localStorage.removeItem('userProfileImageUrl');
     // }
 
     setTimeout(() => {
