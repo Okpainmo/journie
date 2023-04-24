@@ -132,7 +132,7 @@ function EditEntryPage() {
   return (
     <AppWrapper>
       <AppBody>
-        <main className='bg-white login-page px-3 pt-10 pb-20 rounded border mt-20 sm:mt-40 sm:w-[600px] sm:mx-auto'>
+        <main className='bg-white login-page sm:px-3 pt-10 pb-20 rounded sm:border mt-20 sm:mt-40 md:w-[600px] md:mx-auto'>
           <div className='flex flex-col sm:px-3 gap-8'>
             {/* <Link href='/'> */}
             <div className='logo-wrapper text-center'>
