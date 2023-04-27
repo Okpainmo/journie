@@ -12,7 +12,7 @@ import MyModal from '@/components/MyModal';
 import Preloader from '@/components/Preloader';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import banner from '@/assets/images/journie-banner.jpg';
+import banner from '@/assets/images/journie-hero.jpg';
 import Emoji from '@/components/Emoji';
 import { useRouter } from 'next/router';
 
