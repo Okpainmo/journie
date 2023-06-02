@@ -52,7 +52,7 @@ function SignUpPage() {
     try {
       const newUser = await axios.post(
         // 'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
-        'https://journie-server.fly.dev/api/sign-up', // this is the endpoint for creating a new user
+        'https://journie-journalling-note-taking-app.onrender.com/api/sign-up', // this is the endpoint for creating a new user
         signUpForm
       );
 

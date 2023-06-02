@@ -28,7 +28,7 @@ function ProfilePage() {
     }).then((res) => res.json());
 
   const { data, isLoading, error } = useSWR(
-    'https://journie-server.fly.dev/api/get-all-entries/',
+    'https://journie-journalling-note-taking-app.onrender.com/api/get-all-entries/',
     fetcher
   );
 
@@ -56,7 +56,7 @@ function ProfilePage() {
     // ...
 
     const deletedEntry = await axios.delete(
-      `https://journie-server.fly.dev/api/delete-entry/${entryId}`,
+      `https://journie-journalling-note-taking-app.onrender.com/api/delete-entry/${entryId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('userToken')}`,
@@ -65,7 +65,9 @@ function ProfilePage() {
       }
     );
 
-    mutate('https://journie-server.fly.dev/api/get-all-entries/');
+    mutate(
+      'https://journie-journalling-note-taking-app.onrender.com/api/get-all-entries/'
+    );
 
     console.log(deletedEntry);
 
