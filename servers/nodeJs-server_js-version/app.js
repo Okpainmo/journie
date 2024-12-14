@@ -44,8 +44,7 @@ const sharp = require('sharp');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// AWS related envirenment variables
-
+// AWS related environment variables
 const awsBucketName = process.env.AWS_BUCKET_NAME;
 const awsBucketRegion = process.env.AWS_BUCKET_REGION;
 const awsAccessKey = process.env.AWS_ACCESS_KEY;
@@ -313,9 +312,6 @@ app.post('/api/create-entry', authMiddleware, async (req, res) => {
 
   // get all entries made by this user
 
-  const userEntries = await entryModel.find({ createdBy: req.user.userId });
-  console.log(userEntries.length);
-
   // create and set entry index
 
   const entryIndex = userEntries.length + 1;
@@ -346,7 +342,7 @@ app.get('/api/get-entry/:id', authMiddleware, async (req, res) => {
 
     if (!entry) {
       return res.status(404).json({
-        requestStatus: 'erequest unseccessful',
+        requestStatus: 'request unseccessful',
         errorMessage: 'entry not found',
       });
     }
@@ -389,15 +385,17 @@ app.delete('/api/delete-entry/:id', authMiddleware, async (req, res) => {
   console.log(id);
 
   try {
-    const entry = await entryModel.findByIdAndRemove({ _id: id });
+    const entryToDelete = await entryModel.findById(id);
 
-    if (!entry) {
+    if (!entryToDelete) {
       return res.status(404).json({ error: `entry with id: ${id} not found` });
     }
 
+    const deletedEntry = await entryModel.findByIdAndRemove({ _id: id });
+
     res
       .status(200)
-      .json({ requestStatus: 'entry deleted successfully', entry });
+      .json({ requestStatus: 'entry deleted successfully', deletedEntry });
   } catch (error) {
     res
       .status(500)
@@ -413,10 +411,7 @@ app.patch('/api/edit-entry/:id', authMiddleware, async (req, res) => {
   const { entryTitle, entryLocation, entryBody, entryIndex } = req.body;
 
   try {
-    const entry = await entryModel.findByIdAndUpdate({ _id: id }, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const entryToUpdate = await entryModel.findById(id);
 
     if (
       (entryTitle === '' || entryLocation === '' || entryBody === '',
@@ -428,6 +423,15 @@ app.patch('/api/edit-entry/:id', authMiddleware, async (req, res) => {
     if (!entry) {
       return res.status(404).json({ error: `entry with id: ${id} not found` });
     }
+
+    const updatedEntry = await entryModel.findByIdAndUpdate(
+      { _id: id },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     res
       .status(200)

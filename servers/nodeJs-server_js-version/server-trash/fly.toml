@@ -1,0 +1,16 @@
+# fly.toml app configuration file generated for journie-server on 2023-05-09T22:53:43+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "journie-server"
+primary_region = "ams"
+
+[env]
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
