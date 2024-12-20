@@ -1,43 +1,43 @@
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, timedelta, timezone
+from typing import Optional, List
 from ninja import Router, Schema
 from django.shortcuts import get_object_or_404
 from .models import User
 from django.contrib.auth.hashers import make_password, check_password
 from ninja.errors import HttpError
 from django.http import JsonResponse
-from datetime import timedelta
 from django.conf import settings
-
 import jwt
-from datetime import datetime, timedelta, timezone
+from middlewares.auth_middleware import AuthBearer
+
 user_router = Router()
 
 # Input model for user registration
-class InSpecs(Schema):
+class LoginInSpecs(Schema):
+    email: str
+    password: str
+
+class RegisterInSpecs(Schema):
     full_name: str
     email: str
     password: str
     confirm_password: str
-    profile_image_url: Optional[str] = ""  # Optional profile image URL
+    profile_image_url: Optional[str] = None  # Add this field to your schema
 
 
-# Output schema for user data (only includes fields relevant to the response)
+# Output schema for user data
 class UserOut(Schema):
     id: int
     full_name: str
     email: str
-    profile_image_url: Optional[str] = ""  # Optional profile image URL
+    profile_image_url: Optional[str] = ""
     created_at: datetime
 
-# Output model for user data
 class ResponseSpecs(Schema):
-    # error: Optional[str] = None  # Optional error field
     responseMessage: str
-    response: Optional[dict] = None  # Nested response field, which will contain preSignUpUser
+    response: Optional[dict] = None
 
     class Config:
-        # Define how the nested response should be serialized
         schema_extra = {
             "example": {
                 "responseMessage": "User created successfully",
@@ -54,16 +54,50 @@ class ResponseSpecs(Schema):
             }
         }
 
+# Output schema for getting all users
+class GetAllUsersResponseSpecs(Schema):
+    responseMessage: str
+    response: List[UserOut]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "responseMessage": "Users fetched successfully",
+                "response": [
+                    {
+                        "id": 1,
+                        "full_name": "John Doe",
+                        "email": "johndoe@example.com",
+                        "profile_image_url": "http://example.com/image.jpg",
+                        "created_at": "2024-12-13T12:00:00Z"
+                    },
+                    {
+                        "id": 2,
+                        "full_name": "Jane Doe",
+                        "email": "janedoe@example.com",
+                        "profile_image_url": "http://example.com/jane_image.jpg",
+                        "created_at": "2024-12-14T12:00:00Z"
+                    }
+                ],
+                "access_token": 'dummy_access_token'
+            }
+        }
+
 @user_router.post("/register-user", response={201: ResponseSpecs})
-def create_user(request, payload: InSpecs):
-    # Check if passwords match
+def create_user(request, payload: RegisterInSpecs):
+    client = request.headers.get('client')
+
+    if not client or client.strip() == "":
+        raise HttpError(400, "client data must be provided on request header")
+    
     if payload.password != payload.confirm_password:
         raise HttpError(400, "Passwords do not match")
 
-    # Hash the password before saving using Django's `make_password`
+    if User.objects.filter(email=payload.email).exists():
+        raise HttpError(400, "A user with this email already exists")
+
     hashed_password = make_password(payload.password)
 
-    # Create the new user with hashed password
     user = User.objects.create(
         full_name=payload.full_name,
         email=payload.email,
@@ -71,105 +105,159 @@ def create_user(request, payload: InSpecs):
         profile_image_url=payload.profile_image_url,
     )
 
-     # Create JWT token
     payload_data = {
         "user_id": user.id,
         "email": user.email,
-        "exp": datetime.now(timezone.utc) + timedelta(hours=1),  # Token expiration (1 hour)
-        "iat": datetime.now(timezone.utc)  # Issued at time
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+        "iat": datetime.now(timezone.utc)
     }
 
     access_token = jwt.encode(payload_data, settings.SECRET_KEY, algorithm="HS256")
 
-    # Serialize the user data to match the output format
     user_data = {
         "id": user.id,
         "full_name": user.full_name,
         "email": user.email,
         "profile_image_url": user.profile_image_url,
-        "created_at": user.created_at.isoformat()  # Ensure the date is serializable
+        "created_at": user.created_at.isoformat()
     }
 
-    # Set the cookie options
     response = JsonResponse({
         "responseMessage": "User created successfully",
         "response": {
             "user": user_data,
-            "access_token": access_token  # Add serialized user data here
+            "access_token": access_token
         }
     })
 
-   
+    hashed_email = make_password(user.email)
+    hashed_jwt_secret = make_password(settings.SECRET_KEY)
 
-    # Set a secure cookie with additional options
     response.set_cookie(
-        'user_token', 'your_token_value',
-        httponly=True,  # Makes the cookie inaccessible to JavaScript
-        secure=True,    # Ensures the cookie is only sent over HTTPS
-        samesite='Strict',  # Prevents CSRF attacks by restricting cross-site cookie sharing
-        max_age=timedelta(days=7),  # Set the expiration time for the cookie
-        expires=timedelta(days=7)  # Ensure the cookie is set to expire in 7 days
+        'JOURNIE__SessionRefreshToken', f'SessionRefreshToken___{hashed_jwt_secret}___{hashed_email}',
+        httponly=True,
+        secure=True,
+        samesite='Strict',
+        max_age=timedelta(days=7).total_seconds(),
     )
 
     return response
 
 @user_router.post("/log-in-user", response={200: ResponseSpecs})
-def log_in_user(request, payload: InSpecs):
-    """
-    Logs in a user by validating their credentials.
-    """
-    # Retrieve the user based on the email
+def log_in_user(request, payload: LoginInSpecs):
+    client = request.headers.get('client')
+
+    if not client or client.strip() == "":
+        raise HttpError(400, "client data must be provided on request header")
+    
     user = get_object_or_404(User, email=payload.email)
 
-    # Verify the password using Django's `check_password`
-    if not check_password(payload.password, user.password):
+    if not user.check_password(payload.password):
         raise HttpError(401, "Invalid email or password")
 
-    # Serialize the user data (excluding the password)
-    user_data = {
-        "id": user.id,
-        "full_name": user.full_name,
-        "email": user.email,
-        "profile_image_url": user.profile_image_url,
-        "created_at": user.created_at.isoformat()  # Ensure the date is serializable
-    }
-
-     # Create JWT token
     payload_data = {
         "user_id": user.id,
         "email": user.email,
-        "exp": datetime.now(timezone.utc) + timedelta(hours=1),  # Token expiration (1 hour)
-        "iat": datetime.now(timezone.utc)  # Issued at time
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+        "iat": datetime.now(timezone.utc)
     }
 
     access_token = jwt.encode(payload_data, settings.SECRET_KEY, algorithm="HS256")
 
-    # Serialize the user data to match the output format
     user_data = {
         "id": user.id,
         "full_name": user.full_name,
         "email": user.email,
         "profile_image_url": user.profile_image_url,
-        "created_at": user.created_at.isoformat()  # Ensure the date is serializable
+        "created_at": user.created_at.isoformat()
     }
 
-     # Set the cookie options
     response = JsonResponse({
-        "responseMessage": "User created successfully",
+        "responseMessage": "User logged in successfully",
         "response": {
             "user": user_data,
-            "access_token": access_token  # Add serialized user data here
+            "access_token": access_token
         }
     })
 
-    # Set a secure cookie with additional options
+    hashed_email = make_password(user.email)
+    hashed_jwt_secret = make_password(settings.SECRET_KEY)
+
+    # sessionToken = f'SessionRefreshToken___{hashed_jwt_secret}___{hashed_email}'
+    # print(sessionToken)
+
     response.set_cookie(
-        'user_token', 'your_token_value',
-        httponly=True,  # Makes the cookie inaccessible to JavaScript
-        secure=True,    # Ensures the cookie is only sent over HTTPS
-        samesite='Strict',  # Prevents CSRF attacks by restricting cross-site cookie sharing
-        max_age=timedelta(days=7),  # Set the expiration time for the cookie
-        expires=timedelta(days=7)  # Ensure the cookie is set to expire in 7 days
+        'JOURNIE__SessionRefreshToken', f'SessionRefreshToken___{hashed_jwt_secret}___{hashed_email}',
+        httponly=True,
+        secure=True,
+        samesite='Strict',
+        expires=datetime.now(timezone.utc) + timedelta(days=7)
     )
 
+    return response
+
+# New endpoint to get a single user by ID
+@user_router.get("/get-user/{user_id}", response={200: UserOut}, auth=AuthBearer(),
+)
+def get_user(request, user_id: int):
+    """
+    Endpoint to get details of a specific user by their ID.
+
+    Args:
+        request: The HTTP request object, containing user information.
+        user_id: ID of the user to fetch.
+
+    Returns:
+        UserOut: User details.
+    """
+    
+    user = get_object_or_404(User, id=user_id)
+
+    # Serialize the user using the UserOut schema
+    user_data = UserOut.from_orm(user)
+
+    response = JsonResponse({
+        "responseMessage": "User fetched successfully",
+        "response": {'user':user_data.dict(), "access_token": request.new_access_token}
+    })
+
+    response.set_cookie(
+       'JOURNIE__SessionRefreshToken', request.refresh_token,
+       httponly=True,
+       secure=True,
+       samesite='Strict',
+       max_age=timedelta(days=7).total_seconds(),
+   )
+    
+    return response
+
+
+# New endpoint to get all users
+@user_router.get("/get-all-users", response={200: GetAllUsersResponseSpecs}, auth=AuthBearer())
+def get_all_users(request):
+    """
+    Endpoint to fetch all users.
+
+    Args:
+        request: The HTTP request object, containing user information.
+
+    Returns:
+        GetAllUsersResponseSpecs: List of all users.
+    """
+    users = User.objects.all()
+    user_list = [UserOut.from_orm(user).dict() for user in users]
+
+    response = JsonResponse({
+       "responseMessage": "Your message here",  # Update with appropriate message
+       "response": {'user_list': user_list, "access_token": request.new_access_token}  # Update with appropriate response data
+   })
+    
+    response.set_cookie(
+       'JOURNIE__SessionRefreshToken', request.refresh_token,
+       httponly=True,
+       secure=True,
+       samesite='Strict',
+       max_age=timedelta(days=7).total_seconds(),
+   )
+    
     return response

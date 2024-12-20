@@ -21,11 +21,29 @@ from django.urls import path, include
 from . import views
 from entry.views import entry_router
 from user.views import user_router
+from django.http import HttpResponse
+from django.http import JsonResponse
+from utils.generate_tokens import generate_tokens
+
+from ninja.errors import AuthenticationError
+
 
 api = NinjaAPI()
 
 api.add_router("/v1/user", user_router)  
 api.add_router("/v1/entry", entry_router)  
+
+@api.exception_handler(AuthenticationError)
+def validation_errors(request, exc):
+    return JsonResponse(
+        {"error": str(AuthenticationError), "response_message": "invalid/expired token or related error - please re-authenticate"},
+        status=422
+    )
+
+    # return JsonResponse({
+    #     "error": str(AuthenticationError),
+    #     "response_message": "invalid/expired token or related error - please re-authenticate"
+    # }, status=422)
 
 
 urlpatterns = [

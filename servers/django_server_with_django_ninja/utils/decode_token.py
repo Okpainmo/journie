@@ -18,6 +18,7 @@ def decode_token(token):
     try:
         # Decode the token and validate its signature
         decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        print(decoded)
         
         return decoded
     except jwt.ExpiredSignatureError:

@@ -18,22 +18,24 @@ def generate_tokens(user):
         RuntimeError: If token generation fails due to an unforeseen error.
     """
     try:
-        # Validate required user attributes
-        if not hasattr(user, 'id') or not hasattr(user, 'email'):
-            raise ValueError("User object must have 'id' and 'email' attributes.")
+        # Validate required user attributes - this is coming from the middleware
+        # if not hasattr(user, 'user_id') or not hasattr(user, 'email'):
+        #     raise ValueError("User object must have 'id' and 'email' attributes.")
 
         # Define token payload
+        print(user)
         payload_data = {
-            "user_id": user.id,
-            "email": user.email,
+            "user_id": user.get('user_id'),
+            "email": user.get('email'),
             "exp": datetime.now(timezone.utc) + timedelta(hours=1),  # Token expiration (1 hour)
             "iat": datetime.now(timezone.utc),  # Issued at time
         }
 
         # Encode the token
-        access_token = jwt.encode(payload_data, settings.SECRET_KEY, algorithm="HS256")
+        session_token = jwt.encode(payload_data, settings.SECRET_KEY, algorithm="HS256")
 
-        return access_token
+        # print(session_token)
+        return session_token
 
     except ValueError as e:
         # Handle cases where user attributes are missing
